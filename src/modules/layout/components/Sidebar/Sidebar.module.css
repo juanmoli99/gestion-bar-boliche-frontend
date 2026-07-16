@@ -1,0 +1,161 @@
+.sidebar {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+}
+
+.brand {
+  min-height: var(--layout-header-height);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    var(--space-4);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.logo {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+
+  color: var(--color-text);
+
+  user-select: none;
+}
+
+.closeButton {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.closeButton:focus-visible {
+  outline: 3px solid rgba(79, 140, 255, 0.3);
+  outline-offset: 2px;
+}
+
+.navigation {
+  min-height: 0;
+
+  flex: 1;
+
+  overflow-y: auto;
+}
+
+.overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1100;
+
+    inset:
+      0
+      auto
+      0
+      0;
+
+    width: min(84vw, 320px);
+    height: 100dvh;
+
+    border-right: 1px solid var(--color-border);
+
+    box-shadow: var(--shadow-md);
+
+    transform: translateX(-105%);
+
+    visibility: hidden;
+
+    transition:
+      transform var(--transition-normal),
+      visibility 0s linear var(--transition-normal);
+  }
+
+  .mobileOpen {
+    transform: translateX(0);
+
+    visibility: visible;
+
+    transition:
+      transform var(--transition-normal),
+      visibility 0s linear 0s;
+  }
+
+  .brand {
+    justify-content: space-between;
+  }
+
+  .closeButton {
+    display: inline-flex;
+  }
+
+  .overlay {
+    position: fixed;
+    z-index: 1090;
+
+    inset: 0;
+
+    display: block;
+
+    border: 0;
+
+    background: rgba(0, 0, 0, 0.68);
+
+    opacity: 0;
+    visibility: hidden;
+
+    cursor: pointer;
+
+    transition:
+      opacity var(--transition-normal),
+      visibility 0s linear var(--transition-normal);
+  }
+
+  .overlayVisible {
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+      opacity var(--transition-normal),
+      visibility 0s linear 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .mobileOpen,
+  .overlay,
+  .overlayVisible {
+    transition: none;
+  }
+}

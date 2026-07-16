@@ -1,0 +1,37 @@
+.page {
+  width: 100%;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.title {
+  color: var(--color-text);
+
+  font-size: var(--font-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.description {
+  max-width: 680px;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--font-lg);
+  }
+
+  .description {
+    font-size: var(--font-sm);
+  }
+}

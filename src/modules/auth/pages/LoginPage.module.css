@@ -1,0 +1,30 @@
+.wrapper {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: var(--space-8);
+}
+
+.version {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+
+  letter-spacing: .08em;
+
+  user-select: none;
+}
+
+@media (max-width: 480px) {
+
+  .wrapper {
+
+    gap: var(--space-6);
+
+  }
+
+}

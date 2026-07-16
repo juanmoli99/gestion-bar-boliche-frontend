@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+
+  margin: 0 auto;
+
+  padding:
+    var(--space-6)
+    var(--space-5);
+}
+
+.centered {
+  min-height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+.xs {
+  max-width: 400px;
+}
+
+.sm {
+  max-width: 500px;
+}
+
+.md {
+  max-width: 700px;
+}
+
+.lg {
+  max-width: 1000px;
+}
+
+.xl {
+  max-width: 1400px;
+}
+
+.fluid {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .container {
+    padding:
+      var(--space-5)
+      var(--space-4);
+  }
+
+}
