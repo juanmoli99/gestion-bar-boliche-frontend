@@ -1,3 +1,6 @@
+
+apps/frontend/
+apps/backend/
 # Logs
 logs
 *.log
