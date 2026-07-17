@@ -76,6 +76,20 @@ function formatState(
   return labels[state];
 }
 
+function formatPartyModality(
+  modality: Reservation['modalidadFiesta'],
+): string {
+  if (modality === 'BARRA_LIBRE') {
+    return 'Barra libre';
+  }
+
+  if (modality === 'COCTELERIA') {
+    return 'Coctelería a la carta';
+  }
+
+  return '';
+}
+
 export function ReservationCard({
   reservation,
 }: ReservationCardProps) {
@@ -115,6 +129,9 @@ export function ReservationCard({
     reservation.estado === 'PENDIENTE' ||
     reservation.estado === 'SENADA' ||
     reservation.estado === 'CONFIRMADA';
+
+  const description =
+    reservation.observaciones?.trim() ?? '';
 
   const stateClassNames = [
     styles.status,
@@ -315,12 +332,14 @@ export function ReservationCard({
             </span>
           </div>
 
-          {reservation.nombreFormula && (
-            <span className={styles.formula}>
-              {reservation.nombreFormula}
-            </span>
+          {reservation.tipo === 'FIESTA' &&
+          reservation.modalidadFiesta && (
+              <span className={styles.modality}>
+              {formatPartyModality(
+                  reservation.modalidadFiesta,
+              )}
+              </span>
           )}
-
           {error && (
             <span
               className={styles.error}
@@ -332,6 +351,14 @@ export function ReservationCard({
         </div>
 
         <div className={styles.actions}>
+            {description && (
+            <span
+                className={styles.description}
+                title={description}
+            >
+                {description}
+            </span>
+            )}
           <span className={stateClassNames}>
             {formatState(
               reservation.estado,

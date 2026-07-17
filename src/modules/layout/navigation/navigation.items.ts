@@ -2,6 +2,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   ClipboardList,
+  DollarSign,
   LayoutDashboard,
   Package,
   Settings,
@@ -10,7 +11,9 @@ import {
   WalletCards,
 } from 'lucide-react';
 
-import type { NavigationItem } from './NavigationItem';
+import type {
+  NavigationItem,
+} from './NavigationItem';
 
 export const navigationItems: NavigationItem[] = [
   {
@@ -60,6 +63,12 @@ export const navigationItems: NavigationItem[] = [
     label: 'Reportes',
     path: '/reportes',
     icon: ChartNoAxesCombined,
+  },
+  {
+    id: 'valores',
+    label: 'Valores',
+    path: '/valores',
+    icon: DollarSign,
   },
   {
     id: 'configuracion',

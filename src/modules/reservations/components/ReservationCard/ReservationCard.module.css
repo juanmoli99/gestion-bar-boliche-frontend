@@ -83,10 +83,11 @@
   gap: var(--space-2);
 }
 
-.formula {
+.modality {
   color: var(--color-text-secondary);
 
   font-size: var(--font-xs);
+  font-weight: 600;
 }
 
 .actions {
@@ -94,6 +95,19 @@
   align-items: center;
 
   gap: var(--space-3);
+}
+
+.description {
+  max-width: 280px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  line-height: 1.4;
 }
 
 .status {
@@ -194,11 +208,19 @@
   }
 
   .actions {
-    grid-column: 2;
-    grid-row: 1;
+  width: 100%;
 
-    align-self: start;
-  }
+  grid-column: 1 / -1;
+  grid-row: 3;
+
+  justify-content: flex-end;
+}
+
+.description {
+  max-width: min(55%, 320px);
+
+  margin-right: auto;
+}
 }
 
 @media (max-width: 480px) {
@@ -206,11 +228,23 @@
     padding: var(--space-4);
   }
 
-  .actions {
-    flex-direction: column-reverse;
-    align-items: flex-end;
+ .actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
 
-    gap: var(--space-2);
+  gap: var(--space-2);
+}
+
+  .description {
+    max-width: 100%;
+
+    flex: 1 1 100%;
+
+    margin-right: 0;
+
+    white-space: normal;
   }
 
   .details {

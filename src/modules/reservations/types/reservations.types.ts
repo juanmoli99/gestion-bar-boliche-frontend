@@ -2,6 +2,10 @@ export type TipoReserva =
   | 'MESA'
   | 'FIESTA';
 
+export type ModalidadFiesta =
+  | 'BARRA_LIBRE'
+  | 'COCTELERIA';
+
 export type EstadoReserva =
   | 'PENDIENTE'
   | 'SENADA'
@@ -20,7 +24,8 @@ export interface Reservation {
   fechaHora: string;
   cantidadPersonas: number;
   nombreFormula: string | null;
-}
+  modalidadFiesta: ModalidadFiesta | null;
+  observaciones: string | null;}
 
 export interface ListReservationsFilters {
   fechaDesde?: string;
@@ -49,9 +54,9 @@ export interface CreateReservationRequest {
   cantidadPersonas: number;
   cantidadMenusSinTacc?: number;
   tipoFiesta?: string;
+  modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
   observaciones?: string;
-  precioTotal?: number;
   montoSena?: number;
 }
 
@@ -65,12 +70,19 @@ export interface CreateReservationResponse {
   cantidadPersonas: number;
   cantidadMenusSinTacc: number | null;
   tipoFiesta: string | null;
+  modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
   observaciones: string | null;
+
   precioTotal: string | null;
   montoSena: string | null;
   saldoPendiente: string | null;
+
+  valorPizzaLibreAplicado: string | null;
+  valorMenuSinTaccAplicado: string | null;
+  valorBarraLibreAplicado: string | null;
+
   creadoEn: string;
 }
 
@@ -84,11 +96,18 @@ export interface ReservationDetail {
   cantidadPersonas: number;
   cantidadMenusSinTacc: number | null;
   tipoFiesta: string | null;
+  modalidadFiesta: ModalidadFiesta | null;
   observaciones: string | null;
   motivoCancelacion: string | null;
+
   precioTotal: string | null;
   montoSena: string | null;
   saldoPendiente: string | null;
+
+  valorPizzaLibreAplicado: string | null;
+  valorMenuSinTaccAplicado: string | null;
+  valorBarraLibreAplicado: string | null;
+
   medioPagoSena: string | null;
   fechaSena: string | null;
   medioPagoFinal: string | null;
@@ -113,9 +132,9 @@ export interface UpdateReservationRequest {
   cantidadPersonas?: number;
   cantidadMenusSinTacc?: number;
   tipoFiesta?: string;
+  modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
   observaciones?: string;
-  precioTotal?: number;
   montoSena?: number;
 }
 
@@ -129,12 +148,19 @@ export interface UpdateReservationResponse {
   cantidadPersonas: number;
   cantidadMenusSinTacc: number | null;
   tipoFiesta: string | null;
+  modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
   observaciones: string | null;
+
   precioTotal: string | null;
   montoSena: string | null;
   saldoPendiente: string | null;
+
+  valorPizzaLibreAplicado: string | null;
+  valorMenuSinTaccAplicado: string | null;
+  valorBarraLibreAplicado: string | null;
+
   actualizadoEn: string;
 }
 

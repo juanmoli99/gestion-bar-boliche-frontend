@@ -24,7 +24,16 @@ import {
   updateReservation,
 } from '../../api/reservations.api';
 
+import {
+  loadValues,
+} from '../../../values/services/values.service';
+
 import type {
+  ValuesData,
+} from '../../../values/types/values.types';
+
+import type {
+  ModalidadFiesta,
   ReservationDetail,
   ReservationFormula,
   TipoReserva,
@@ -49,8 +58,8 @@ interface FormState {
   cantidadPersonas: string;
   cantidadMenusSinTacc: string;
   tipoFiesta: string;
+  modalidadFiesta: ModalidadFiesta | '';
   formulaId: string;
-  precioTotal: string;
   montoSena: string;
   observaciones: string;
 }
@@ -64,8 +73,8 @@ const INITIAL_STATE: FormState = {
   cantidadPersonas: '1',
   cantidadMenusSinTacc: '0',
   tipoFiesta: '',
+  modalidadFiesta: '',
   formulaId: '',
-  precioTotal: '',
   montoSena: '',
   observaciones: '',
 };
@@ -89,13 +98,16 @@ function getArgentinaDateParts(
         minute: '2-digit',
         hourCycle: 'h23',
       },
-    ).formatToParts(new Date(value));
+    ).formatToParts(
+      new Date(value),
+    );
 
   const getPart = (
     type: Intl.DateTimeFormatPartTypes,
   ) =>
     parts.find(
-      (part) => part.type === type,
+      (part) =>
+        part.type === type,
     )?.value ?? '';
 
   return {
@@ -125,13 +137,15 @@ function createInitialState(
   );
 
   return {
-    tipo: reservation.tipo,
+    tipo:
+      reservation.tipo,
 
     nombreCliente:
       reservation.nombreCliente,
 
     telefonoCliente:
-      reservation.telefonoCliente ?? '',
+      reservation.telefonoCliente ??
+      '',
 
     fecha,
     hora,
@@ -144,23 +158,29 @@ function createInitialState(
     cantidadMenusSinTacc:
       String(
         reservation
-          .cantidadMenusSinTacc ?? 0,
+          .cantidadMenusSinTacc ??
+          0,
       ),
 
     tipoFiesta:
-      reservation.tipoFiesta ?? '',
+      reservation.tipoFiesta ??
+      '',
+
+    modalidadFiesta:
+      reservation.modalidadFiesta ??
+      '',
 
     formulaId:
-      reservation.formula?.id ?? '',
-
-    precioTotal:
-      reservation.precioTotal ?? '',
+      reservation.formula?.id ??
+      '',
 
     montoSena:
-      reservation.montoSena ?? '',
+      reservation.montoSena ??
+      '',
 
     observaciones:
-      reservation.observaciones ?? '',
+      reservation.observaciones ??
+      '',
   };
 }
 
@@ -172,11 +192,35 @@ function parseOptionalMoney(
   }
 
   const parsedValue =
-    Number(value);
+    Number(
+      value.replace(',', '.'),
+    );
 
-  return Number.isFinite(parsedValue)
+  return Number.isFinite(
+    parsedValue,
+  )
     ? parsedValue
     : undefined;
+}
+
+function parseStoredValue(
+  value: string | null | undefined,
+): number | null {
+  if (
+    value === null ||
+    value === undefined
+  ) {
+    return null;
+  }
+
+  const parsedValue =
+    Number(value);
+
+  return Number.isFinite(
+    parsedValue,
+  )
+    ? parsedValue
+    : null;
 }
 
 function formatCurrency(
@@ -190,6 +234,58 @@ function formatCurrency(
       maximumFractionDigits: 2,
     },
   ).format(value);
+}
+
+function getWeekday(
+  fecha: string,
+): number | null {
+  const [
+    year,
+    month,
+    day,
+  ] = fecha
+    .split('-')
+    .map(Number);
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return null;
+  }
+
+  return new Date(
+    Date.UTC(
+      year,
+      month - 1,
+      day,
+    ),
+  ).getUTCDay();
+}
+
+function getCurrentPizzaValue(
+  fecha: string,
+  values: ValuesData,
+): number {
+  const weekday =
+    getWeekday(fecha);
+
+  if (weekday === 5) {
+    return Number(
+      values.pizzaLibreViernes,
+    );
+  }
+
+  if (weekday === 6) {
+    return Number(
+      values.pizzaLibreSabado,
+    );
+  }
+
+  return Number(
+    values.pizzaLibreGeneral,
+  );
 }
 
 export function ReservationForm({
@@ -214,10 +310,20 @@ export function ReservationForm({
   const [formulas, setFormulas] =
     useState<ReservationFormula[]>([]);
 
+  const [values, setValues] =
+    useState<ValuesData | null>(
+      null,
+    );
+
   const [
     loadingFormulas,
     setLoadingFormulas,
   ] = useState(false);
+
+  const [
+    loadingValues,
+    setLoadingValues,
+  ] = useState(true);
 
   const [saving, setSaving] =
     useState(false);
@@ -234,7 +340,42 @@ export function ReservationForm({
   }, [initialReservation]);
 
   useEffect(() => {
-    if (form.tipo !== 'FIESTA') {
+    let active = true;
+
+    async function load() {
+      setLoadingValues(true);
+
+      try {
+        const data =
+          await loadValues();
+
+        if (active) {
+          setValues(data);
+        }
+      } catch {
+        if (active) {
+          setError(
+            'No se pudieron cargar los valores configurados.',
+          );
+        }
+      } finally {
+        if (active) {
+          setLoadingValues(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      form.tipo !== 'FIESTA'
+    ) {
       return;
     }
 
@@ -270,10 +411,207 @@ export function ReservationForm({
     };
   }, [form.tipo]);
 
-  const precioTotal =
-    parseOptionalMoney(
-      form.precioTotal,
-    ) ?? 0;
+  const cantidadPersonas =
+    Number(
+      form.cantidadPersonas,
+    );
+
+  const cantidadMenusSinTacc =
+    Number(
+      form.cantidadMenusSinTacc ||
+        0,
+    );
+
+  const pricing =
+    useMemo(() => {
+      const personasValidas =
+        Number.isInteger(
+          cantidadPersonas,
+        ) &&
+        cantidadPersonas > 0;
+
+      const menusValidos =
+        Number.isInteger(
+          cantidadMenusSinTacc,
+        ) &&
+        cantidadMenusSinTacc >= 0 &&
+        cantidadMenusSinTacc <=
+          cantidadPersonas;
+
+      if (!personasValidas) {
+        return {
+          ready: false,
+          total: 0,
+        };
+      }
+
+      if (
+        form.tipo === 'MESA'
+      ) {
+        if (!menusValidos) {
+          return {
+            ready: false,
+            total: 0,
+          };
+        }
+
+        if (editing) {
+          const pizzaValue =
+            parseStoredValue(
+              initialReservation
+                ?.valorPizzaLibreAplicado,
+            );
+
+          const glutenFreeValue =
+            parseStoredValue(
+              initialReservation
+                ?.valorMenuSinTaccAplicado,
+            );
+
+          if (
+            pizzaValue === null ||
+            glutenFreeValue === null
+          ) {
+            return {
+              ready: false,
+              total: 0,
+            };
+          }
+
+          const commonPeople =
+            cantidadPersonas -
+            cantidadMenusSinTacc;
+
+          return {
+            ready: true,
+
+            total:
+              commonPeople *
+                pizzaValue +
+              cantidadMenusSinTacc *
+                glutenFreeValue,
+          };
+        }
+
+        if (
+          !values ||
+          !form.fecha
+        ) {
+          return {
+            ready: false,
+            total: 0,
+          };
+        }
+
+        const pizzaValue =
+          getCurrentPizzaValue(
+            form.fecha,
+            values,
+          );
+
+        const glutenFreeValue =
+          Number(
+            values.menuSinTacc,
+          );
+
+        const commonPeople =
+          cantidadPersonas -
+          cantidadMenusSinTacc;
+
+        return {
+          ready: true,
+
+          total:
+            commonPeople *
+              pizzaValue +
+            cantidadMenusSinTacc *
+              glutenFreeValue,
+        };
+      }
+
+      if (
+        form.modalidadFiesta ===
+        'COCTELERIA'
+      ) {
+        return {
+          ready: true,
+          total: 0,
+        };
+      }
+
+      if (
+        form.modalidadFiesta !==
+        'BARRA_LIBRE'
+      ) {
+        return {
+          ready: false,
+          total: 0,
+        };
+      }
+
+      const reservaYaEraBarraLibre =
+        editing &&
+        initialReservation
+          ?.modalidadFiesta ===
+          'BARRA_LIBRE';
+
+      if (
+        reservaYaEraBarraLibre
+      ) {
+        const storedOpenBarValue =
+          parseStoredValue(
+            initialReservation
+              ?.valorBarraLibreAplicado,
+          );
+
+        if (
+          storedOpenBarValue === null
+        ) {
+          return {
+            ready: false,
+            total: 0,
+          };
+        }
+
+        return {
+          ready: true,
+
+          total:
+            cantidadPersonas *
+            storedOpenBarValue,
+        };
+      }
+
+      if (!values) {
+        return {
+          ready: false,
+          total: 0,
+        };
+      }
+
+      const currentOpenBarValue =
+        Number(
+          values
+            .fiestaBarraLibrePorPersona,
+        );
+
+      return {
+        ready: true,
+
+        total:
+          cantidadPersonas *
+          currentOpenBarValue,
+      };
+    }, [
+      cantidadMenusSinTacc,
+      cantidadPersonas,
+      editing,
+      form.fecha,
+      form.modalidadFiesta,
+      form.tipo,
+      initialReservation,
+      values,
+    ]);
 
   const montoSena =
     parseOptionalMoney(
@@ -281,18 +619,15 @@ export function ReservationForm({
     ) ?? 0;
 
   const saldoPendiente =
-    useMemo(
-      () =>
-        Math.max(
-          precioTotal -
+    form.tipo === 'FIESTA' &&
+    form.modalidadFiesta ===
+      'COCTELERIA'
+      ? 0
+      : Math.max(
+          pricing.total -
             montoSena,
           0,
-        ),
-      [
-        precioTotal,
-        montoSena,
-      ],
-    );
+        );
 
   function update<
     K extends keyof FormState,
@@ -304,16 +639,21 @@ export function ReservationForm({
       ...current,
       [field]: value,
     }));
+
+    setError('');
   }
 
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
 
     setError('');
 
-    if (!form.nombreCliente.trim()) {
+    if (
+      !form.nombreCliente.trim()
+    ) {
       setError(
         'Ingresá el nombre del cliente.',
       );
@@ -332,11 +672,6 @@ export function ReservationForm({
       return;
     }
 
-    const cantidadPersonas =
-      Number(
-        form.cantidadPersonas,
-      );
-
     if (
       !Number.isInteger(
         cantidadPersonas,
@@ -349,12 +684,6 @@ export function ReservationForm({
 
       return;
     }
-
-    const cantidadMenusSinTacc =
-      Number(
-        form.cantidadMenusSinTacc ||
-          0,
-      );
 
     if (
       form.tipo === 'MESA' &&
@@ -373,6 +702,29 @@ export function ReservationForm({
     }
 
     if (
+      form.tipo === 'MESA' &&
+      cantidadMenusSinTacc >
+        cantidadPersonas
+    ) {
+      setError(
+        'La cantidad de menús sin TACC no puede ser mayor a la cantidad total de personas.',
+      );
+
+      return;
+    }
+
+    if (
+      form.tipo === 'FIESTA' &&
+      !form.modalidadFiesta
+    ) {
+      setError(
+        'Seleccioná la modalidad de la fiesta.',
+      );
+
+      return;
+    }
+
+    if (
       form.tipo === 'FIESTA' &&
       !form.formulaId
     ) {
@@ -383,9 +735,23 @@ export function ReservationForm({
       return;
     }
 
+    if (!pricing.ready) {
+      setError(
+        'No se pudo calcular el precio con los valores disponibles.',
+      );
+
+      return;
+    }
+
+    const esCocteleria =
+      form.tipo === 'FIESTA' &&
+      form.modalidadFiesta ===
+        'COCTELERIA';
+
     if (
+      !esCocteleria &&
       montoSena >
-      precioTotal
+        pricing.total
     ) {
       setError(
         'La seña no puede ser mayor al precio total.',
@@ -421,6 +787,12 @@ export function ReservationForm({
             undefined
           : undefined,
 
+      modalidadFiesta:
+        form.tipo === 'FIESTA' &&
+        form.modalidadFiesta
+          ? form.modalidadFiesta
+          : undefined,
+
       formulaId:
         form.tipo === 'FIESTA'
           ? form.formulaId
@@ -429,11 +801,6 @@ export function ReservationForm({
       observaciones:
         form.observaciones.trim() ||
         undefined,
-
-      precioTotal:
-        parseOptionalMoney(
-          form.precioTotal,
-        ),
 
       montoSena:
         parseOptionalMoney(
@@ -477,7 +844,9 @@ export function ReservationForm({
       onSubmit={handleSubmit}
       noValidate
     >
-      <section className={styles.section}>
+      <section
+        className={styles.section}
+      >
         <div
           className={
             styles.sectionHeader
@@ -552,7 +921,9 @@ export function ReservationForm({
         </div>
       </section>
 
-      <section className={styles.section}>
+      <section
+        className={styles.section}
+      >
         <div
           className={
             styles.sectionHeader
@@ -563,7 +934,9 @@ export function ReservationForm({
           </h2>
         </div>
 
-        <div className={styles.grid}>
+        <div
+          className={styles.grid}
+        >
           <TextInput
             label="Nombre del cliente"
             value={
@@ -681,7 +1054,9 @@ export function ReservationForm({
             </h2>
           </div>
 
-          <div className={styles.grid}>
+          <div
+            className={styles.grid}
+          >
             <TextInput
               label="Tipo de fiesta"
               placeholder="Ej.: Cumpleaños"
@@ -698,9 +1073,43 @@ export function ReservationForm({
             />
 
             <label
-              className={
-                styles.field
-              }
+              className={styles.field}
+            >
+              <span>
+                Modalidad
+              </span>
+
+              <select
+                value={
+                  form.modalidadFiesta
+                }
+                onChange={(event) =>
+                  update(
+                    'modalidadFiesta',
+                    event.target
+                      .value as
+                      | ModalidadFiesta
+                      | '',
+                  )
+                }
+                disabled={saving}
+              >
+                <option value="">
+                  Seleccionar modalidad
+                </option>
+
+                <option value="BARRA_LIBRE">
+                  Barra libre
+                </option>
+
+                <option value="COCTELERIA">
+                  Coctelería a la carta
+                </option>
+              </select>
+            </label>
+
+            <label
+              className={styles.field}
             >
               <span>Fórmula</span>
 
@@ -728,16 +1137,10 @@ export function ReservationForm({
                 {formulas.map(
                   (formula) => (
                     <option
-                      key={
-                        formula.id
-                      }
-                      value={
-                        formula.id
-                      }
+                      key={formula.id}
+                      value={formula.id}
                     >
-                      {
-                        formula.nombre
-                      }
+                      {formula.nombre}
                     </option>
                   ),
                 )}
@@ -747,7 +1150,9 @@ export function ReservationForm({
         </section>
       )}
 
-      <section className={styles.section}>
+      <section
+        className={styles.section}
+      >
         <div
           className={
             styles.sectionHeader
@@ -763,22 +1168,23 @@ export function ReservationForm({
             styles.moneyGrid
           }
         >
-          <TextInput
-            type="number"
-            min={0}
-            step="0.01"
-            label="Precio total"
-            value={
-              form.precioTotal
+          <div
+            className={
+              styles.balance
             }
-            onChange={(event) =>
-              update(
-                'precioTotal',
-                event.target.value,
-              )
-            }
-            disabled={saving}
-          />
+          >
+            <span>
+              Precio calculado
+            </span>
+
+            <strong>
+              {loadingValues
+                ? 'Calculando...'
+                : formatCurrency(
+                    pricing.total,
+                  )}
+            </strong>
+          </div>
 
           <TextInput
             type="number"
@@ -794,7 +1200,10 @@ export function ReservationForm({
                 event.target.value,
               )
             }
-            disabled={saving}
+            disabled={
+              saving ||
+              loadingValues
+            }
           />
 
           <div
@@ -807,15 +1216,19 @@ export function ReservationForm({
             </span>
 
             <strong>
-              {formatCurrency(
-                saldoPendiente,
-              )}
+              {loadingValues
+                ? 'Calculando...'
+                : formatCurrency(
+                    saldoPendiente,
+                  )}
             </strong>
           </div>
         </div>
       </section>
 
-      <section className={styles.section}>
+      <section
+        className={styles.section}
+      >
         <label
           className={styles.field}
         >
@@ -873,6 +1286,9 @@ export function ReservationForm({
             editing
               ? 'Guardando cambios...'
               : 'Guardando...'
+          }
+          disabled={
+            loadingValues
           }
         >
           <Save

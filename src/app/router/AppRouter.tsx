@@ -16,15 +16,19 @@ import {
 import {
   DashboardPage,
 } from '../../modules/dashboard/pages/DashboardPage';
-import {
-  CreateReservationPage,
-} from '../../modules/reservations/pages/CreateReservationPage';
+
 import {
   MainLayout,
 } from '../../modules/layout/components/MainLayout/MainLayout';
+
+import {
+  CreateReservationPage,
+} from '../../modules/reservations/pages/CreateReservationPage';
+
 import {
   EditReservationPage,
 } from '../../modules/reservations/pages/EditReservationPage';
+
 import {
   ReservationsPage,
 } from '../../modules/reservations/pages/ReservationsPage';
@@ -32,6 +36,10 @@ import {
 import {
   PlaceholderPage,
 } from '../../modules/shared/pages/PlaceholderPage';
+
+import {
+  ValuesPage,
+} from '../../modules/values/pages/ValuesPage';
 
 import {
   ProtectedRoute,
@@ -95,6 +103,7 @@ export function AppRouter() {
             path="/reservas/nueva"
             element={<CreateReservationPage />}
           />
+
           <Route
             path="/reservas/:id/editar"
             element={<EditReservationPage />}
@@ -138,6 +147,11 @@ export function AppRouter() {
                 description="Cálculos de consumo y listas de compra para fiestas."
               />
             }
+          />
+
+          <Route
+            path="/valores"
+            element={<ValuesPage />}
           />
 
           <Route
