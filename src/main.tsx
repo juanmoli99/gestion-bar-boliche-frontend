@@ -1,10 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import {
   BrowserRouter,
 } from 'react-router-dom';
 
-import { AuthProvider } from './modules/auth/context/AuthContext';
+import {
+  RealtimeProvider,
+} from './app/realtime/RealtimeContext';
+
+import {
+  AuthProvider,
+} from './modules/auth/context/AuthContext';
 
 import './assets/styles/variables.css';
 import './assets/styles/reset.css';
@@ -18,7 +25,9 @@ ReactDOM.createRoot(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <RealtimeProvider>
+          <App />
+        </RealtimeProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

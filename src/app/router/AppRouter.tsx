@@ -5,32 +5,47 @@ import {
   Routes,
 } from 'react-router-dom';
 
-import { LoginPage } from '../../modules/auth/pages/LoginPage';
-import { useAuth } from '../../modules/auth/hooks/useAuth';
+import {
+  useAuth,
+} from '../../modules/auth/hooks/useAuth';
 
-import { MainLayout } from '../../modules/layout/components/MainLayout/MainLayout';
+import {
+  LoginPage,
+} from '../../modules/auth/pages/LoginPage';
 
-import { PlaceholderPage } from '../../modules/shared/pages/PlaceholderPage';
+import {
+  DashboardPage,
+} from '../../modules/dashboard/pages/DashboardPage';
+import {
+  CreateReservationPage,
+} from '../../modules/reservations/pages/CreateReservationPage';
+import {
+  MainLayout,
+} from '../../modules/layout/components/MainLayout/MainLayout';
+import {
+  EditReservationPage,
+} from '../../modules/reservations/pages/EditReservationPage';
+import {
+  ReservationsPage,
+} from '../../modules/reservations/pages/ReservationsPage';
 
-import { ProtectedRoute } from './ProtectedRoute';
-import { ROUTES } from './routes';
+import {
+  PlaceholderPage,
+} from '../../modules/shared/pages/PlaceholderPage';
+
+import {
+  ProtectedRoute,
+} from './ProtectedRoute';
+
+import {
+  ROUTES,
+} from './routes';
 
 function AuthenticatedLayout() {
   return (
     <MainLayout>
       <Outlet />
     </MainLayout>
-  );
-}
-
-function DashboardPage() {
-  const { usuario } = useAuth();
-
-  return (
-    <PlaceholderPage
-      title={`Bienvenido, ${usuario?.nombreCompleto ?? ''}`}
-      description="Este será el dashboard principal de PREVIA."
-    />
   );
 }
 
@@ -67,38 +82,22 @@ export function AppRouter() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AuthenticatedLayout />}>
           <Route
-            path="/"
+            path={ROUTES.home}
             element={<DashboardPage />}
           />
 
           <Route
-            path="/mesas"
-            element={
-              <PlaceholderPage
-                title="Mesas"
-                description="Gestión del salón, apertura de mesas y seguimiento del servicio."
-              />
-            }
-          />
-
-          <Route
             path="/reservas"
-            element={
-              <PlaceholderPage
-                title="Reservas"
-                description="Administración de reservas de mesas y fiestas."
-              />
-            }
+            element={<ReservationsPage />}
           />
 
           <Route
-            path="/caja"
-            element={
-              <PlaceholderPage
-                title="Caja"
-                description="Apertura, movimientos, cobros y cierre de caja."
-              />
-            }
+            path="/reservas/nueva"
+            element={<CreateReservationPage />}
+          />
+          <Route
+            path="/reservas/:id/editar"
+            element={<EditReservationPage />}
           />
 
           <Route
@@ -112,11 +111,21 @@ export function AppRouter() {
           />
 
           <Route
+            path="/proveedores"
+            element={
+              <PlaceholderPage
+                title="Proveedores"
+                description="Administración de proveedores."
+              />
+            }
+          />
+
+          <Route
             path="/inventario"
             element={
               <PlaceholderPage
                 title="Inventario"
-                description="Control de ítems, stock y movimientos de inventario."
+                description="Control de ítems, stock y movimientos."
               />
             }
           />
@@ -132,21 +141,11 @@ export function AppRouter() {
           />
 
           <Route
-            path="/reportes"
-            element={
-              <PlaceholderPage
-                title="Reportes"
-                description="Indicadores y consultas del funcionamiento del negocio."
-              />
-            }
-          />
-
-          <Route
             path="/configuracion"
             element={
               <PlaceholderPage
                 title="Configuración"
-                description="Usuarios, permisos y parámetros generales del sistema."
+                description="Usuarios, permisos y parámetros generales."
               />
             }
           />
