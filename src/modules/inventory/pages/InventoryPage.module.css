@@ -1,0 +1,696 @@
+.page {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+}
+
+.headerActions {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+}
+
+.headerActions button {
+  white-space: nowrap;
+}
+
+.headerActions button svg {
+  flex-shrink: 0;
+}
+
+.title {
+  color: var(--color-text);
+
+  font-size: var(--font-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.description {
+  margin-top: var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+
+.summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 220px),
+        1fr
+      )
+    );
+
+  gap: var(--space-4);
+}
+
+.summaryCard {
+  min-height: 104px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-5);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  color: var(--color-primary);
+}
+
+.summaryCard div {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.summaryCard span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+}
+
+.summaryCard strong {
+  color: var(--color-text);
+
+  font-size: var(--font-xl);
+  line-height: 1;
+}
+
+.summaryCritical {
+  color: var(--color-warning);
+}
+
+.filters {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(190px, 240px);
+
+  gap: var(--space-4);
+}
+
+.search {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  padding:
+    0
+    var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.search input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+}
+
+.search input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.inventoryFilter {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.inventoryFilter > span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.inventoryFilter select {
+  width: 100%;
+  min-height: 48px;
+
+  padding:
+    0
+    var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+}
+
+.inventoryFilter select:focus {
+  border-color: var(--color-primary);
+  outline: 0;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.stockGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 310px),
+        1fr
+      )
+    );
+
+  gap: var(--space-4);
+}
+
+.stockCard {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-5);
+
+  padding: var(--space-5);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.criticalCard {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--color-warning) 55%,
+      var(--color-border)
+    );
+}
+
+.stockHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+}
+
+.stockHeader div {
+  min-width: 0;
+}
+
+.stockHeader h2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text);
+
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.stockHeader p {
+  margin-top: var(--space-1);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+}
+
+.inventoryBadge {
+  flex-shrink: 0;
+
+  min-height: 27px;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding:
+    0
+    var(--space-3);
+
+  border-radius: 999px;
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.quantity {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.quantity > span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+}
+
+.quantity strong {
+  color: var(--color-text);
+
+  font-size: clamp(
+    1.7rem,
+    4vw,
+    2.2rem
+  );
+
+  line-height: 1;
+}
+
+.quantity small {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-md);
+  font-weight: 600;
+}
+
+.stockDetails {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: var(--space-4);
+}
+
+.stockDetails div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.stockDetails span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.stockDetails strong {
+  overflow-wrap: anywhere;
+
+  color: var(--color-text);
+
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.normalStatus {
+  color: var(--color-success) !important;
+}
+
+.criticalStatus {
+  color: var(--color-warning) !important;
+}
+
+.stockFooter {
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+
+  padding-top: var(--space-4);
+
+  border-top: 1px solid var(--color-border);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  line-height: 1.4;
+}
+
+.deleteButton {
+  flex-shrink: 0;
+
+  min-height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  padding:
+    0
+    var(--space-3);
+
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--color-danger) 55%,
+      var(--color-border)
+    );
+
+  border-radius: var(--radius-md);
+
+  background: transparent;
+
+  color: var(--color-danger);
+
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background:
+    color-mix(
+      in srgb,
+      var(--color-danger) 10%,
+      transparent
+    );
+}
+
+.deleteButton:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.55;
+}
+
+.deleteButton:disabled svg {
+  animation:
+    deleteSpin
+    0.9s
+    linear
+    infinite;
+}
+
+.deletingCard {
+  pointer-events: none;
+
+  opacity: 0.65;
+}
+
+.deleteError {
+  display: flex;
+  align-items: flex-start;
+
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--color-danger) 8%,
+      var(--color-surface)
+    );
+
+  color: var(--color-danger);
+}
+
+.deleteError svg {
+  flex-shrink: 0;
+
+  margin-top: 1px;
+}
+
+.deleteError p {
+  margin: 0;
+
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+@keyframes deleteSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stockFooter > span {
+  min-width: 0;
+}
+
+.loading {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 310px),
+        1fr
+      )
+    );
+
+  gap: var(--space-4);
+}
+
+.loading span {
+  min-height: 280px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-surface) 25%,
+      var(--color-surface-hover) 50%,
+      var(--color-surface) 75%
+    );
+
+  background-size: 200% 100%;
+
+  animation:
+    loading
+    1.4s
+    infinite;
+}
+
+.errorState,
+.emptyState {
+  min-height: 190px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-6);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+}
+
+.errorState {
+  color: var(--color-danger);
+}
+
+.emptyState {
+  color: var(--color-text-secondary);
+}
+
+.errorState div,
+.emptyState div {
+  min-width: 0;
+}
+
+.errorState h2,
+.emptyState h2 {
+  color: var(--color-text);
+
+  font-size: var(--font-lg);
+}
+
+.errorState p,
+.emptyState p {
+  margin-top: var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+@keyframes loading {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerActions {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+}
+
+.headerActions button {
+  width: 100%;
+}
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .inventoryFilter {
+    gap: var(--space-2);
+  }
+
+  .errorState {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+
+    .stockFooter {
+    align-items: stretch;
+    flex-direction: column;
+    }
+
+    .deleteButton {
+    width: 100%;
+    }
+
+    .headerActions {
+    grid-template-columns: 1fr;
+    }
+  .page {
+    gap: var(--space-5);
+  }
+
+  .title {
+    font-size: var(--font-lg);
+  }
+
+  .description {
+    font-size: var(--font-sm);
+  }
+
+  .summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summaryCard {
+    min-height: 96px;
+
+    padding: var(--space-4);
+  }
+
+  .stockGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stockCard {
+    padding: var(--space-4);
+  }
+
+  .stockDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .errorState,
+  .emptyState {
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    padding: var(--space-5);
+  }
+
+  .errorState button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading span {
+    animation: none;
+  }
+}

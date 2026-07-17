@@ -18,6 +18,18 @@ import {
 } from '../../modules/dashboard/pages/DashboardPage';
 
 import {
+  CreateInventoryItemPage,
+} from '../../modules/inventory/pages/CreateInventoryItemPage';
+
+import {
+  InventoryCountPage,
+} from '../../modules/inventory/pages/InventoryCountPage';
+
+import {
+  InventoryPage,
+} from '../../modules/inventory/pages/InventoryPage';
+
+import {
   MainLayout,
 } from '../../modules/layout/components/MainLayout/MainLayout';
 
@@ -131,12 +143,17 @@ export function AppRouter() {
 
           <Route
             path="/inventario"
-            element={
-              <PlaceholderPage
-                title="Inventario"
-                description="Control de ítems, stock y movimientos."
-              />
-            }
+            element={<InventoryPage />}
+          />
+
+          <Route
+            path="/inventario/nuevo"
+            element={<CreateInventoryItemPage />}
+          />
+
+          <Route
+            path="/inventario/conteo"
+            element={<InventoryCountPage />}
           />
 
           <Route
