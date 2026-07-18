@@ -192,12 +192,11 @@ function RoleRoute({
 
 export function AppRouter() {
   return (
-    <Routes>
-      <Route
-        path={ROUTES.login}
-        element={<PublicLoginRoute />}
-      />
-
+  <Routes>
+    <Route
+      path="/"
+      element={<PublicLoginRoute />}
+    />
       <Route element={<ProtectedRoute />}>
         <Route element={<AuthenticatedLayout />}>
           <Route
@@ -210,7 +209,7 @@ export function AppRouter() {
             }
           >
             <Route
-              path={ROUTES.home}
+              path="/inicio"
               element={<DashboardPage />}
             />
 
