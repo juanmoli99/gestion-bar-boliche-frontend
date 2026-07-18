@@ -8,7 +8,7 @@ import {
 import {
   useAuth,
 } from '../../modules/auth/hooks/useAuth';
-
+import { SalaryPositionsPage } from '../../modules/salaries/pages/SalaryPositionsPage';
 import {
   LoginPage,
 } from '../../modules/auth/pages/LoginPage';
@@ -336,16 +336,11 @@ export function AppRouter() {
           >
             <Route
               path="/sueldos"
-              element={
-                <PlaceholderPage
-                  title="Sueldos"
-                  description="Administración de sueldos."
-                />
-              }
+              element={<SalaryPositionsPage />}
             />
-          </Route>
-        </Route>
-      </Route>
+                </Route>
+              </Route>
+            </Route>
 
       <Route
         path="*"

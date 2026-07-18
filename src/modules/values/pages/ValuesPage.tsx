@@ -4,7 +4,7 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from 'react';
-
+import { SalaryPositionsManager } from '../../salaries/components/SalaryPositionsManager/SalaryPositionsManager';
 import {
   CircleCheckBig,
   CircleX,
@@ -548,6 +548,7 @@ export function ValuesPage() {
           )}
         </form>
       )}
+      <SalaryPositionsManager />
     </section>
   );
 }
