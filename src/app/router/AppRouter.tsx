@@ -13,9 +13,29 @@ import {
   LoginPage,
 } from '../../modules/auth/pages/LoginPage';
 
+import type {
+  RolUsuario,
+} from '../../modules/auth/types/auth.types';
+
+import {
+  CalculationsPage,
+} from '../../modules/calculations/pages/CalculationsPage';
+
 import {
   DashboardPage,
 } from '../../modules/dashboard/pages/DashboardPage';
+
+import {
+  CreateFormulaPage,
+} from '../../modules/formulas/pages/CreateFormulaPage';
+
+import {
+  EditFormulaPage,
+} from '../../modules/formulas/pages/EditFormulaPage';
+
+import {
+  FormulasPage,
+} from '../../modules/formulas/pages/FormulasPage';
 
 import {
   CreateInventoryItemPage,
@@ -34,6 +54,10 @@ import {
 } from '../../modules/layout/components/MainLayout/MainLayout';
 
 import {
+  PurchasesPage,
+} from '../../modules/purchases/pages/PurchasesPage';
+
+import {
   CreateReservationPage,
 } from '../../modules/reservations/pages/CreateReservationPage';
 
@@ -50,6 +74,14 @@ import {
 } from '../../modules/shared/pages/PlaceholderPage';
 
 import {
+  CreateUserPage,
+} from '../../modules/users/pages/CreateUserPage';
+
+import {
+  UsersPage,
+} from '../../modules/users/pages/UsersPage';
+
+import {
   ValuesPage,
 } from '../../modules/values/pages/ValuesPage';
 
@@ -61,6 +93,28 @@ import {
   ROUTES,
 } from './routes';
 
+const ROLE_HOME: Record<
+  RolUsuario,
+  string
+> = {
+  ADMINISTRADOR: '/',
+  OPERADOR: '/reservas',
+  BARRA: '/inventario',
+  COCINA: '/inventario',
+  MOZO: '/reservas',
+  LIMPIEZA: '/inventario',
+};
+
+interface RoleRouteProps {
+  roles: RolUsuario[];
+}
+
+function getHomeByRole(
+  rol: RolUsuario,
+): string {
+  return ROLE_HOME[rol];
+}
+
 function AuthenticatedLayout() {
   return (
     <MainLayout>
@@ -71,6 +125,7 @@ function AuthenticatedLayout() {
 
 function PublicLoginRoute() {
   const {
+    usuario,
     estaAutenticado,
     sesionInicializada,
   } = useAuth();
@@ -79,16 +134,60 @@ function PublicLoginRoute() {
     return null;
   }
 
-  if (estaAutenticado) {
+  if (
+    estaAutenticado &&
+    usuario
+  ) {
     return (
       <Navigate
-        to={ROUTES.home}
+        to={getHomeByRole(
+          usuario.rol,
+        )}
         replace
       />
     );
   }
 
   return <LoginPage />;
+}
+
+function RoleRoute({
+  roles,
+}: RoleRouteProps) {
+  const {
+    usuario,
+    sesionInicializada,
+  } = useAuth();
+
+  if (!sesionInicializada) {
+    return null;
+  }
+
+  if (!usuario) {
+    return (
+      <Navigate
+        to={ROUTES.login}
+        replace
+      />
+    );
+  }
+
+  if (
+    !roles.includes(
+      usuario.rol,
+    )
+  ) {
+    return (
+      <Navigate
+        to={getHomeByRole(
+          usuario.rol,
+        )}
+        replace
+      />
+    );
+  }
+
+  return <Outlet />;
 }
 
 export function AppRouter() {
@@ -102,96 +201,189 @@ export function AppRouter() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AuthenticatedLayout />}>
           <Route
-            path={ROUTES.home}
-            element={<DashboardPage />}
-          />
-
-          <Route
-            path="/reservas"
-            element={<ReservationsPage />}
-          />
-
-          <Route
-            path="/reservas/nueva"
-            element={<CreateReservationPage />}
-          />
-
-          <Route
-            path="/reservas/:id/editar"
-            element={<EditReservationPage />}
-          />
-
-          <Route
-            path="/compras"
             element={
-              <PlaceholderPage
-                title="Compras"
-                description="Registro y seguimiento de compras a proveedores."
+              <RoleRoute
+                roles={[
+                  'ADMINISTRADOR',
+                ]}
               />
             }
-          />
+          >
+            <Route
+              path={ROUTES.home}
+              element={<DashboardPage />}
+            />
+
+            <Route
+              path="/compras"
+              element={<PurchasesPage />}
+            />
+
+            <Route
+              path="/proveedores"
+              element={
+                <PlaceholderPage
+                  title="Proveedores"
+                  description="Administración de proveedores."
+                />
+              }
+            />
+
+            <Route
+              path="/inventario/nuevo"
+              element={
+                <CreateInventoryItemPage />
+              }
+            />
+
+            <Route
+              path="/formulas"
+              element={<FormulasPage />}
+            />
+
+            <Route
+              path="/formulas/nueva"
+              element={<CreateFormulaPage />}
+            />
+
+            <Route
+              path="/formulas/:id/editar"
+              element={<EditFormulaPage />}
+            />
+
+            <Route
+              path="/calculos"
+              element={<CalculationsPage />}
+            />
+
+            <Route
+              path="/valores"
+              element={<ValuesPage />}
+            />
+
+            <Route
+              path="/configuracion"
+              element={<UsersPage />}
+            />
+
+            <Route
+              path="/configuracion/usuarios/nuevo"
+              element={<CreateUserPage />}
+            />
+          </Route>
 
           <Route
-            path="/proveedores"
             element={
-              <PlaceholderPage
-                title="Proveedores"
-                description="Administración de proveedores."
+              <RoleRoute
+                roles={[
+                  'ADMINISTRADOR',
+                  'OPERADOR',
+                  'MOZO',
+                ]}
               />
             }
-          />
+          >
+            <Route
+              path="/reservas"
+              element={<ReservationsPage />}
+            />
+
+            <Route
+              path="/reservas/nueva"
+              element={<CreateReservationPage />}
+            />
+
+            <Route
+              path="/reservas/:id/editar"
+              element={<EditReservationPage />}
+            />
+          </Route>
 
           <Route
-            path="/inventario"
-            element={<InventoryPage />}
-          />
-
-          <Route
-            path="/inventario/nuevo"
-            element={<CreateInventoryItemPage />}
-          />
-
-          <Route
-            path="/inventario/conteo"
-            element={<InventoryCountPage />}
-          />
-
-          <Route
-            path="/calculos"
             element={
-              <PlaceholderPage
-                title="Cálculos"
-                description="Cálculos de consumo y listas de compra para fiestas."
+              <RoleRoute
+                roles={[
+                  'ADMINISTRADOR',
+                  'OPERADOR',
+                  'BARRA',
+                  'COCINA',
+                  'MOZO',
+                  'LIMPIEZA',
+                ]}
               />
             }
-          />
+          >
+            <Route
+              path="/inventario"
+              element={<InventoryPage />}
+            />
+
+            <Route
+              path="/inventario/conteo"
+              element={<InventoryCountPage />}
+            />
+          </Route>
 
           <Route
-            path="/valores"
-            element={<ValuesPage />}
-          />
-
-          <Route
-            path="/configuracion"
             element={
-              <PlaceholderPage
-                title="Configuración"
-                description="Usuarios, permisos y parámetros generales."
+              <RoleRoute
+                roles={[
+                  'ADMINISTRADOR',
+                  'OPERADOR',
+                ]}
               />
             }
-          />
+          >
+            <Route
+              path="/sueldos"
+              element={
+                <PlaceholderPage
+                  title="Sueldos"
+                  description="Administración de sueldos."
+                />
+              }
+            />
+          </Route>
         </Route>
       </Route>
 
       <Route
         path="*"
-        element={
-          <Navigate
-            to={ROUTES.home}
-            replace
-          />
-        }
+        element={<RoleRedirect />}
       />
     </Routes>
+  );
+}
+
+function RoleRedirect() {
+  const {
+    usuario,
+    estaAutenticado,
+    sesionInicializada,
+  } = useAuth();
+
+  if (!sesionInicializada) {
+    return null;
+  }
+
+  if (
+    !estaAutenticado ||
+    !usuario
+  ) {
+    return (
+      <Navigate
+        to={ROUTES.login}
+        replace
+      />
+    );
+  }
+
+  return (
+    <Navigate
+      to={getHomeByRole(
+        usuario.rol,
+      )}
+      replace
+    />
   );
 }

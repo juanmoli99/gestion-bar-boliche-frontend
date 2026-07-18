@@ -1,16 +1,37 @@
-import { NavLink } from 'react-router-dom';
+import {
+  NavLink,
+} from 'react-router-dom';
 
-import { navigationItems } from './navigation.items';
+import {
+  useAuth,
+} from '../../auth/hooks/useAuth';
+
+import {
+  navigationItems,
+} from './navigation.items';
 
 import styles from './NavigationMenu.module.css';
 
 export function NavigationMenu() {
+  const {
+    usuario,
+  } = useAuth();
+
+  const visibleItems =
+    navigationItems.filter(
+      (item) =>
+        usuario !== null &&
+        item.rolesPermitidos.includes(
+          usuario.rol,
+        ),
+    );
+
   return (
     <nav
       className={styles.navigation}
       aria-label="Navegación principal"
     >
-      {navigationItems.map((item) => {
+      {visibleItems.map((item) => {
         const Icon = item.icon;
 
         return (
@@ -21,7 +42,10 @@ export function NavigationMenu() {
             className={({ isActive }) =>
               [
                 styles.link,
-                isActive ? styles.active : '',
+
+                isActive
+                  ? styles.active
+                  : '',
               ]
                 .filter(Boolean)
                 .join(' ')
@@ -35,7 +59,9 @@ export function NavigationMenu() {
               />
             )}
 
-            <span>{item.label}</span>
+            <span>
+              {item.label}
+            </span>
           </NavLink>
         );
       })}

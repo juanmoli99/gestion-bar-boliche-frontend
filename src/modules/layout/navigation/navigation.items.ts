@@ -1,14 +1,13 @@
 import {
   CalendarDays,
-  ChartNoAxesCombined,
   ClipboardList,
   DollarSign,
+  FlaskConical,
   LayoutDashboard,
   Package,
   Settings,
   ShoppingCart,
-  TableProperties,
-  WalletCards,
+  Shovel,
 } from 'lucide-react';
 
 import type {
@@ -21,59 +20,97 @@ export const navigationItems: NavigationItem[] = [
     label: 'Dashboard',
     path: '/',
     icon: LayoutDashboard,
-  },
-  {
-    id: 'mesas',
-    label: 'Mesas',
-    path: '/mesas',
-    icon: TableProperties,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
   },
   {
     id: 'reservas',
     label: 'Reservas',
     path: '/reservas',
     icon: CalendarDays,
-  },
-  {
-    id: 'caja',
-    label: 'Caja',
-    path: '/caja',
-    icon: WalletCards,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+      'OPERADOR',
+      'MOZO',
+    ],
   },
   {
     id: 'compras',
     label: 'Compras',
     path: '/compras',
     icon: ShoppingCart,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
   },
   {
     id: 'inventario',
     label: 'Inventario',
     path: '/inventario',
     icon: Package,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+      'OPERADOR',
+      'BARRA',
+      'COCINA',
+      'MOZO',
+      'LIMPIEZA',
+    ],
+  },
+  {
+    id: 'formulas',
+    label: 'Fórmulas',
+    path: '/formulas',
+    icon: FlaskConical,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
   },
   {
     id: 'calculos',
     label: 'Cálculos',
     path: '/calculos',
     icon: ClipboardList,
-  },
-  {
-    id: 'reportes',
-    label: 'Reportes',
-    path: '/reportes',
-    icon: ChartNoAxesCombined,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
   },
   {
     id: 'valores',
     label: 'Valores',
     path: '/valores',
     icon: DollarSign,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
+  },
+  {
+    id: 'sueldos',
+    label: 'Sueldos',
+    path: '/sueldos',
+    icon: Shovel,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+      'OPERADOR',
+    ],
   },
   {
     id: 'configuracion',
     label: 'Configuración',
     path: '/configuracion',
     icon: Settings,
+
+    rolesPermitidos: [
+      'ADMINISTRADOR',
+    ],
   },
 ];

@@ -1,0 +1,415 @@
+.form {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-5);
+}
+
+.section,
+.loadingState {
+  padding: var(--space-5);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.loadingState {
+  min-height: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-text-secondary);
+}
+
+.sectionHeader,
+.itemsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+
+  margin-bottom: var(--space-5);
+}
+
+.sectionHeader h2,
+.itemsHeader h2 {
+  color: var(--color-text);
+
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.sectionHeader p,
+.itemsHeader p {
+  margin-top: var(--space-1);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+.generalFields {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: var(--space-4);
+}
+
+.field {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.field > span,
+.quantityField > span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  font-weight: 500;
+}
+
+.field textarea {
+  width: 100%;
+  min-height: 112px;
+
+  padding:
+    var(--space-3)
+    var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  outline: none;
+  resize: vertical;
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+}
+
+.field textarea:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.selectedCounter {
+  flex-shrink: 0;
+
+  padding:
+    var(--space-2)
+    var(--space-3);
+
+  border-radius: var(--radius-md);
+
+  background:
+    rgba(79, 140, 255, 0.12);
+
+  color: var(--color-primary);
+
+  font-size: var(--font-xs);
+  font-weight: 700;
+}
+
+.search {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-4);
+
+  padding:
+    0
+    var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.search svg {
+  flex-shrink: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.search input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+}
+
+.item,
+.itemSelected {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(220px, 320px);
+
+  align-items: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.item {
+  grid-template-columns: 1fr;
+}
+
+.itemSelected {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--color-primary) 55%,
+      var(--color-border)
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--color-primary) 5%,
+      var(--color-surface)
+    );
+}
+
+.itemSelector {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  cursor: pointer;
+}
+
+.itemSelector input {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  accent-color: var(--color-primary);
+}
+
+.itemInfo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.itemInfo strong {
+  overflow-wrap: anywhere;
+
+  color: var(--color-text);
+
+  font-size: var(--font-sm);
+}
+
+.itemInfo span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.quantityField {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.quantityInput {
+  min-height: 44px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.quantityInput:focus-within {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.quantityInput input {
+  width: 100%;
+  min-width: 0;
+
+  padding:
+    0
+    var(--space-3);
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+}
+
+.quantityInput > span {
+  padding:
+    0
+    var(--space-3);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.emptyState {
+  min-height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-5);
+
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-secondary);
+}
+
+.emptyState strong {
+  color: var(--color-text);
+
+  font-size: var(--font-sm);
+}
+
+.emptyState p {
+  margin-top: var(--space-1);
+
+  font-size: var(--font-xs);
+}
+
+.message {
+  min-height: 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  color: var(--color-danger);
+
+  font-size: var(--font-sm);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: var(--space-3);
+}
+
+@media (max-width: 760px) {
+  .generalFields {
+    grid-template-columns: 1fr;
+  }
+
+  .itemSelected {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .section,
+  .loadingState {
+    padding: var(--space-4);
+  }
+
+  .itemsHeader {
+    flex-direction: column;
+  }
+
+  .selectedCounter {
+    align-self: flex-start;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}

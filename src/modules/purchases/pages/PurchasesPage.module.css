@@ -1,0 +1,670 @@
+.page {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+}
+
+.title {
+  color: var(--color-text);
+
+  font-size: var(--font-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.description {
+  max-width: 720px;
+
+  margin-top: var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+
+.summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 220px),
+        1fr
+      )
+    );
+
+  gap: var(--space-4);
+}
+
+.summaryCard {
+  min-height: 104px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-5);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  color: var(--color-primary);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.summaryCard div {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.summaryCard span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+}
+
+.summaryCard strong {
+  color: var(--color-text);
+
+  font-size: var(--font-xl);
+  line-height: 1;
+}
+
+.filters {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(190px, 240px);
+
+  align-items: end;
+
+  gap: var(--space-4);
+}
+
+.search {
+  min-width: 0;
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.search input {
+  width: 100%;
+  min-width: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+}
+
+.search input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.inventoryFilter {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.inventoryFilter > span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.inventoryFilter select {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  outline: 0;
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+
+  cursor: pointer;
+}
+
+.inventoryFilter select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 140, 255, 0.18);
+}
+
+.tableSection {
+  width: 100%;
+  min-width: 0;
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+
+  padding:
+    var(--space-4)
+    var(--space-5);
+
+  border-bottom: 1px solid var(--color-border);
+
+  background: var(--color-surface-hover);
+}
+
+.tableHeader h2 {
+  color: var(--color-text);
+
+  font-size: var(--font-lg);
+  font-weight: 700;
+}
+
+.tableHeader p {
+  margin-top: var(--space-1);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+}
+
+.tableHeader > svg {
+  flex-shrink: 0;
+
+  color: var(--color-warning);
+}
+
+.tableWrapper {
+  width: 100%;
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  min-width: 0;
+
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  min-width: 0;
+
+  padding:
+    var(--space-4)
+    var(--space-4);
+
+  border-bottom: 1px solid var(--color-border);
+
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table th {
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-transform: uppercase;
+
+  white-space: normal;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr {
+  transition:
+    background-color
+    150ms
+    ease;
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 40%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 18%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 21%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 21%;
+}
+
+.itemInformation {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.itemInformation strong {
+  overflow: hidden;
+
+  color: var(--color-text);
+
+  font-size: var(--font-sm);
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemInformation span {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventoryBadge {
+  max-width: 100%;
+  min-height: 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 var(--space-3);
+
+  border-radius: 999px;
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  font-weight: 700;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table td > strong {
+  color: var(--color-text);
+
+  font-size: var(--font-sm);
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.table td small {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.currentStock {
+  color: var(--color-warning) !important;
+}
+
+.loading {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 320px),
+        1fr
+      )
+    );
+
+  gap: var(--space-4);
+}
+
+.loading span {
+  min-height: 210px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-surface) 25%,
+      var(--color-surface-hover) 50%,
+      var(--color-surface) 75%
+    );
+
+  background-size: 200% 100%;
+
+  animation:
+    loading
+    1.4s
+    infinite;
+}
+
+.errorState,
+.emptyState {
+  min-height: 210px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-4);
+
+  padding: var(--space-6);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+}
+
+.errorState {
+  color: var(--color-danger);
+}
+
+.emptyState {
+  color: var(--color-text-secondary);
+}
+
+.errorState div,
+.emptyState div {
+  min-width: 0;
+}
+
+.errorState h2,
+.emptyState h2 {
+  color: var(--color-text);
+
+  font-size: var(--font-lg);
+}
+
+.errorState p,
+.emptyState p {
+  margin-top: var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+@keyframes loading {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .inventoryFilter {
+    gap: var(--space-2);
+  }
+
+  .tableWrapper {
+    padding: var(--space-3);
+
+    overflow: visible;
+  }
+
+  .table {
+    display: block;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: grid;
+
+    gap: var(--space-3);
+  }
+
+  .table tbody tr {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: var(--space-4);
+
+    padding: var(--space-4);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    background: var(--color-surface-hover);
+  }
+
+  .table tbody tr:hover {
+    background: var(--color-surface-hover);
+  }
+
+    .table td {
+    width: auto !important;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: var(--space-2);
+
+    padding: 0;
+
+    border: 0;
+    }
+
+  .table td::before {
+    color: var(--color-text-secondary);
+
+    font-size: var(--font-xs);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .table td:nth-child(1) {
+    grid-column: 1 / -1;
+
+    padding-bottom: var(--space-3);
+
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .table td:nth-child(1)::before {
+    content: none;
+  }
+
+  .table td:nth-child(2)::before {
+    content: 'Zona';
+  }
+
+  .table td:nth-child(3)::before {
+    content: 'Stock actual';
+  }
+
+  .table td:nth-child(4)::before {
+    content: 'Stock mínimo';
+  }
+
+  .itemInformation strong,
+  .itemInformation span {
+    overflow: visible;
+
+    text-overflow: initial;
+    white-space: normal;
+  }
+
+  .errorState,
+  .emptyState {
+    flex-direction: column;
+
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--space-5);
+  }
+
+  .title {
+    font-size: var(--font-lg);
+  }
+
+  .description {
+    font-size: var(--font-sm);
+  }
+
+  .summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summaryCard {
+    min-height: 96px;
+
+    padding: var(--space-4);
+  }
+
+  .tableHeader {
+    padding: var(--space-4);
+  }
+
+  .tableWrapper {
+    padding: var(--space-2);
+  }
+
+  .table tbody tr {
+    padding: var(--space-3);
+  }
+
+  .table td:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  .errorState,
+  .emptyState {
+    align-items: flex-start;
+
+    padding: var(--space-5);
+
+    text-align: left;
+  }
+
+  .errorState button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading span,
+  .table tbody tr {
+    animation: none;
+    transition: none;
+  }
+}

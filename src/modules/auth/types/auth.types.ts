@@ -1,3 +1,11 @@
+export type RolUsuario =
+  | 'ADMINISTRADOR'
+  | 'OPERADOR'
+  | 'BARRA'
+  | 'COCINA'
+  | 'MOZO'
+  | 'LIMPIEZA';
+
 export interface LoginRequest {
   usuario: string;
   contrasena: string;
@@ -7,7 +15,7 @@ export interface UsuarioAutenticado {
   id: string;
   usuario: string;
   nombreCompleto: string;
-  rol: string;
+  rol: RolUsuario;
 }
 
 export interface LoginData {
