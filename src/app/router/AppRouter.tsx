@@ -93,11 +93,8 @@ import {
   ROUTES,
 } from './routes';
 
-const ROLE_HOME: Record<
-  RolUsuario,
-  string
-> = {
-  ADMINISTRADOR: '/',
+const ROLE_HOME: Record<RolUsuario, string> = {
+  ADMINISTRADOR: '/inicio',
   OPERADOR: '/reservas',
   BARRA: '/inventario',
   COCINA: '/inventario',
