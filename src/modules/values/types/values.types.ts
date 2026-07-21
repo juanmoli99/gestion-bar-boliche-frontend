@@ -7,8 +7,6 @@ export interface ValuesData {
 
   menuSinTacc: string;
 
-  fiestaBarraLibrePorPersona: string;
-
   creadoEn: string;
   actualizadoEn: string;
 }
@@ -19,8 +17,6 @@ export interface UpdateValuesRequest {
   pizzaLibreSabado: number;
 
   menuSinTacc: number;
-
-  fiestaBarraLibrePorPersona: number;
 }
 
 export interface ValuesFormState {
@@ -29,6 +25,4 @@ export interface ValuesFormState {
   pizzaLibreSabado: string;
 
   menuSinTacc: string;
-
-  fiestaBarraLibrePorPersona: string;
 }
