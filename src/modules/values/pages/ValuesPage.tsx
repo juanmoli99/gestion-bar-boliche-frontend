@@ -315,7 +315,7 @@ export function ValuesPage() {
             <div className={styles.fieldsGrid}>
               <label className={styles.field}>
                 <span>
-                  Pizza libre general
+                  Pizza libre Miercoles-Jueves-Domingo
                 </span>
 
                 <div className={styles.inputWrapper}>

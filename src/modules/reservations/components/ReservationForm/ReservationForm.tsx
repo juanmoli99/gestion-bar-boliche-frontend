@@ -25,6 +25,11 @@ import {
 } from '../../api/reservations.api';
 
 import {
+  listFreeBarRates,
+  type FreeBarRate,
+} from '../../../free-bar-rates/api/free-bar-rates.api';
+
+import {
   loadValues,
 } from '../../../values/services/values.service';
 
@@ -60,6 +65,7 @@ interface FormState {
   tipoFiesta: string;
   modalidadFiesta: ModalidadFiesta | '';
   formulaId: string;
+  tarifaBarraLibreId: string;
   montoSena: string;
   observaciones: string;
 }
@@ -75,6 +81,7 @@ const INITIAL_STATE: FormState = {
   tipoFiesta: '',
   modalidadFiesta: '',
   formulaId: '',
+  tarifaBarraLibreId: '',
   montoSena: '',
   observaciones: '',
 };
@@ -172,6 +179,10 @@ function createInitialState(
 
     formulaId:
       reservation.formula?.id ??
+      '',
+
+    tarifaBarraLibreId:
+      reservation.tarifaBarraLibreId ??
       '',
 
     montoSena:
@@ -310,6 +321,11 @@ export function ReservationForm({
   const [formulas, setFormulas] =
     useState<ReservationFormula[]>([]);
 
+  const [
+    freeBarRates,
+    setFreeBarRates,
+  ] = useState<FreeBarRate[]>([]);
+
   const [values, setValues] =
     useState<ValuesData | null>(
       null,
@@ -373,43 +389,55 @@ export function ReservationForm({
   }, []);
 
   useEffect(() => {
-    if (
-      form.tipo !== 'FIESTA'
-    ) {
-      return;
-    }
+  if (
+    form.tipo !== 'FIESTA'
+  ) {
+    return;
+  }
 
-    let active = true;
+  let active = true;
+  
 
-    async function load() {
-      setLoadingFormulas(true);
+  async function load() {
+    setLoadingFormulas(true);
 
-      try {
-        const data =
-          await listFormulas();
+    try {
+      const [
+        formulasData,
+        freeBarRatesData,
+      ] = await Promise.all([
+        listFormulas(),
+        listFreeBarRates(),
+      ]);
 
-        if (active) {
-          setFormulas(data);
-        }
-      } catch {
-        if (active) {
-          setError(
-            'No se pudieron cargar las fórmulas.',
-          );
-        }
-      } finally {
-        if (active) {
-          setLoadingFormulas(false);
-        }
+      if (active) {
+        setFormulas(
+          formulasData,
+        );
+
+        setFreeBarRates(
+          freeBarRatesData,
+        );
+      }
+    } catch {
+      if (active) {
+        setError(
+          'No se pudieron cargar los datos de la fiesta.',
+        );
+      }
+    } finally {
+      if (active) {
+        setLoadingFormulas(false);
       }
     }
+  }
 
-    void load();
+  void load();
 
-    return () => {
-      active = false;
-    };
-  }, [form.tipo]);
+  return () => {
+    active = false;
+  };
+}, [form.tipo]);
 
   const cantidadPersonas =
     Number(
@@ -555,9 +583,20 @@ export function ReservationForm({
           ?.modalidadFiesta ===
           'BARRA_LIBRE';
 
-      if (
-        reservaYaEraBarraLibre
-      ) {
+      const selectedFreeBarRate =
+        freeBarRates.find(
+          (rate) =>
+            rate.id ===
+            form.tarifaBarraLibreId,
+        );
+
+      const mantieneTarifaOriginal =
+        reservaYaEraBarraLibre &&
+        form.tarifaBarraLibreId ===
+          initialReservation
+            ?.tarifaBarraLibreId;
+
+      if (mantieneTarifaOriginal) {
         const storedOpenBarValue =
           parseStoredValue(
             initialReservation
@@ -582,7 +621,7 @@ export function ReservationForm({
         };
       }
 
-      if (!values) {
+      if (!selectedFreeBarRate) {
         return {
           ready: false,
           total: 0,
@@ -591,8 +630,8 @@ export function ReservationForm({
 
       const currentOpenBarValue =
         Number(
-          values
-            .fiestaBarraLibrePorPersona,
+          selectedFreeBarRate
+            .valorPersona,
         );
 
       return {
@@ -608,7 +647,9 @@ export function ReservationForm({
       editing,
       form.fecha,
       form.modalidadFiesta,
+      form.tarifaBarraLibreId,
       form.tipo,
+      freeBarRates,
       initialReservation,
       values,
     ]);
@@ -628,7 +669,7 @@ export function ReservationForm({
             montoSena,
           0,
         );
-
+        
   function update<
     K extends keyof FormState,
   >(
@@ -735,6 +776,19 @@ export function ReservationForm({
       return;
     }
 
+    if (
+      form.tipo === 'FIESTA' &&
+      form.modalidadFiesta ===
+        'BARRA_LIBRE' &&
+      !form.tarifaBarraLibreId
+    ) {
+      setError(
+        'Seleccioná una tarifa de barra libre.',
+      );
+
+      return;
+    }
+
     if (!pricing.ready) {
       setError(
         'No se pudo calcular el precio con los valores disponibles.',
@@ -796,6 +850,13 @@ export function ReservationForm({
       formulaId:
         form.tipo === 'FIESTA'
           ? form.formulaId
+          : undefined,
+
+      tarifaBarraLibreId:
+        form.tipo === 'FIESTA' &&
+        form.modalidadFiesta ===
+          'BARRA_LIBRE'
+          ? form.tarifaBarraLibreId
           : undefined,
 
       observaciones:
@@ -1146,6 +1207,55 @@ export function ReservationForm({
                 )}
               </select>
             </label>
+
+            {form.modalidadFiesta ===
+              'BARRA_LIBRE' && (
+              <label
+                className={styles.field}
+              >
+                <span>
+                  Tarifa de barra libre
+                </span>
+
+                <select
+                  value={
+                    form.tarifaBarraLibreId
+                  }
+                  onChange={(event) =>
+                    update(
+                      'tarifaBarraLibreId',
+                      event.target.value,
+                    )
+                  }
+                  disabled={
+                    saving ||
+                    loadingFormulas
+                  }
+                >
+                  <option value="">
+                    {loadingFormulas
+                      ? 'Cargando...'
+                      : 'Seleccionar tarifa'}
+                  </option>
+
+                  {freeBarRates.map(
+                    (rate) => (
+                      <option
+                        key={rate.id}
+                        value={rate.id}
+                      >
+                        {rate.nombre} -{' '}
+                        {formatCurrency(
+                          Number(
+                            rate.valorPersona,
+                          ),
+                        )}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </label>
+            )}
           </div>
         </section>
       )}

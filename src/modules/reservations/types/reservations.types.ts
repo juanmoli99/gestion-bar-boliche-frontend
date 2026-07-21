@@ -25,7 +25,8 @@ export interface Reservation {
   cantidadPersonas: number;
   nombreFormula: string | null;
   modalidadFiesta: ModalidadFiesta | null;
-  observaciones: string | null;}
+  observaciones: string | null;
+}
 
 export interface ListReservationsFilters {
   fechaDesde?: string;
@@ -56,6 +57,7 @@ export interface CreateReservationRequest {
   tipoFiesta?: string;
   modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
+  tarifaBarraLibreId?: string;
   observaciones?: string;
   montoSena?: number;
 }
@@ -73,6 +75,7 @@ export interface CreateReservationResponse {
   modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
+  tarifaBarraLibreId: string | null;
   observaciones: string | null;
 
   precioTotal: string | null;
@@ -97,6 +100,7 @@ export interface ReservationDetail {
   cantidadMenusSinTacc: number | null;
   tipoFiesta: string | null;
   modalidadFiesta: ModalidadFiesta | null;
+  tarifaBarraLibreId: string | null;
   observaciones: string | null;
   motivoCancelacion: string | null;
 
@@ -134,6 +138,7 @@ export interface UpdateReservationRequest {
   tipoFiesta?: string;
   modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
+  tarifaBarraLibreId?: string;
   observaciones?: string;
   montoSena?: number;
 }
@@ -151,6 +156,7 @@ export interface UpdateReservationResponse {
   modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
+  tarifaBarraLibreId: string | null;
   observaciones: string | null;
 
   precioTotal: string | null;
