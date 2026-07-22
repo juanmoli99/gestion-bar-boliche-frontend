@@ -47,6 +47,13 @@ export interface ReservationFormula {
   actualizadoEn: string;
 }
 
+export interface CookingFormula {
+  id: string;
+  nombre: string;
+  pizzasNormalesPorPersona: string;
+  activa: boolean;
+}
+
 export interface CreateReservationRequest {
   tipo: TipoReserva;
   nombreCliente: string;
@@ -57,6 +64,7 @@ export interface CreateReservationRequest {
   tipoFiesta?: string;
   modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
+  formulaCocinaId?: string;
   tarifaBarraLibreId?: string;
   observaciones?: string;
   montoSena?: number;
@@ -75,6 +83,7 @@ export interface CreateReservationResponse {
   modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
+  formulaCocinaId: string | null;
   tarifaBarraLibreId: string | null;
   observaciones: string | null;
 
@@ -124,6 +133,11 @@ export interface ReservationDetail {
     numeroVersion: number;
   } | null;
 
+  formulaCocina: {
+    id: string;
+    nombre: string;
+  } | null;
+
   activa: boolean;
   creadoEn: string;
   actualizadoEn: string;
@@ -138,6 +152,7 @@ export interface UpdateReservationRequest {
   tipoFiesta?: string;
   modalidadFiesta?: ModalidadFiesta;
   formulaId?: string;
+  formulaCocinaId?: string;
   tarifaBarraLibreId?: string;
   observaciones?: string;
   montoSena?: number;
@@ -156,6 +171,7 @@ export interface UpdateReservationResponse {
   modalidadFiesta: ModalidadFiesta | null;
   formulaId: string | null;
   formulaVersionId: string | null;
+  formulaCocinaId: string | null;
   tarifaBarraLibreId: string | null;
   observaciones: string | null;
 

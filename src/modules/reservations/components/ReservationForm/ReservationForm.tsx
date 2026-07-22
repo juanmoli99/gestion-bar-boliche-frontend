@@ -20,6 +20,7 @@ import {
 
 import {
   createReservation,
+  listCookingFormulas,
   listFormulas,
   updateReservation,
 } from '../../api/reservations.api';
@@ -38,6 +39,7 @@ import type {
 } from '../../../values/types/values.types';
 
 import type {
+  CookingFormula,
   ModalidadFiesta,
   ReservationDetail,
   ReservationFormula,
@@ -65,6 +67,7 @@ interface FormState {
   tipoFiesta: string;
   modalidadFiesta: ModalidadFiesta | '';
   formulaId: string;
+  formulaCocinaId: string;
   tarifaBarraLibreId: string;
   montoSena: string;
   observaciones: string;
@@ -81,6 +84,7 @@ const INITIAL_STATE: FormState = {
   tipoFiesta: '',
   modalidadFiesta: '',
   formulaId: '',
+  formulaCocinaId: '',
   tarifaBarraLibreId: '',
   montoSena: '',
   observaciones: '',
@@ -179,6 +183,10 @@ function createInitialState(
 
     formulaId:
       reservation.formula?.id ??
+      '',
+
+    formulaCocinaId:
+      reservation.formulaCocina?.id ??
       '',
 
     tarifaBarraLibreId:
@@ -322,6 +330,11 @@ export function ReservationForm({
     useState<ReservationFormula[]>([]);
 
   const [
+    cookingFormulas,
+    setCookingFormulas,
+  ] = useState<CookingFormula[]>([]);
+
+  const [
     freeBarRates,
     setFreeBarRates,
   ] = useState<FreeBarRate[]>([]);
@@ -334,6 +347,11 @@ export function ReservationForm({
   const [
     loadingFormulas,
     setLoadingFormulas,
+  ] = useState(false);
+
+  const [
+    loadingCookingFormulas,
+    setLoadingCookingFormulas,
   ] = useState(false);
 
   const [
@@ -387,6 +405,45 @@ export function ReservationForm({
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      form.tipo !== 'MESA'
+    ) {
+      return;
+    }
+
+    let active = true;
+
+    async function load() {
+      setLoadingCookingFormulas(true);
+
+      try {
+        const data =
+          await listCookingFormulas();
+
+        if (active) {
+          setCookingFormulas(data);
+        }
+      } catch {
+        if (active) {
+          setError(
+            'No se pudieron cargar las fórmulas de cocina.',
+          );
+        }
+      } finally {
+        if (active) {
+          setLoadingCookingFormulas(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      active = false;
+    };
+  }, [form.tipo]);
 
   useEffect(() => {
   if (
@@ -755,6 +812,17 @@ export function ReservationForm({
     }
 
     if (
+      form.tipo === 'MESA' &&
+      !form.formulaCocinaId
+    ) {
+      setError(
+        'Seleccioná una fórmula de cocina.',
+      );
+
+      return;
+    }
+
+    if (
       form.tipo === 'FIESTA' &&
       !form.modalidadFiesta
     ) {
@@ -850,6 +918,11 @@ export function ReservationForm({
       formulaId:
         form.tipo === 'FIESTA'
           ? form.formulaId
+          : undefined,
+
+      formulaCocinaId:
+        form.tipo === 'MESA'
+          ? form.formulaCocinaId
           : undefined,
 
       tarifaBarraLibreId:
@@ -1097,6 +1170,49 @@ export function ReservationForm({
               }
               disabled={saving}
             />
+          )}
+
+          {form.tipo === 'MESA' && (
+            <label
+              className={styles.field}
+            >
+              <span>
+                Fórmula de cocina
+              </span>
+
+              <select
+                value={
+                  form.formulaCocinaId
+                }
+                onChange={(event) =>
+                  update(
+                    'formulaCocinaId',
+                    event.target.value,
+                  )
+                }
+                disabled={
+                  saving ||
+                  loadingCookingFormulas
+                }
+              >
+                <option value="">
+                  {loadingCookingFormulas
+                    ? 'Cargando...'
+                    : 'Seleccionar fórmula'}
+                </option>
+
+                {cookingFormulas.map(
+                  (formula) => (
+                    <option
+                      key={formula.id}
+                      value={formula.id}
+                    >
+                      {formula.nombre}
+                    </option>
+                  ),
+                )}
+              </select>
+            </label>
           )}
         </div>
       </section>

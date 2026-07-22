@@ -7,11 +7,13 @@ import {
   CircleAlert,
   FlaskConical,
   Pencil,
+  Pizza,
   Plus,
 } from 'lucide-react';
 
 import {
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import {
@@ -19,14 +21,20 @@ import {
 } from '../../../components/ui/Button';
 
 import {
+  loadCookingFormulas,
   loadFormulas,
 } from '../services/formulas.service';
 
 import type {
+  CookingFormula,
   FormulaListItem,
 } from '../types/formulas.types';
 
 import styles from './FormulasPage.module.css';
+
+type FormulaTab =
+  | 'bebidas'
+  | 'cocina';
 
 function formatDate(
   value: string,
@@ -45,8 +53,25 @@ function formatDate(
 export function FormulasPage() {
   const navigate = useNavigate();
 
+  const [
+    searchParams,
+    setSearchParams,
+  ] = useSearchParams();
+
+  const currentTab:
+    FormulaTab =
+      searchParams.get('tipo') ===
+      'cocina'
+        ? 'cocina'
+        : 'bebidas';
+
   const [formulas, setFormulas] =
     useState<FormulaListItem[]>([]);
+
+  const [
+    cookingFormulas,
+    setCookingFormulas,
+  ] = useState<CookingFormula[]>([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -62,16 +87,31 @@ export function FormulasPage() {
       setError('');
 
       try {
+        if (
+          currentTab === 'bebidas'
+        ) {
+          const data =
+            await loadFormulas();
+
+          if (active) {
+            setFormulas(data);
+          }
+
+          return;
+        }
+
         const data =
-          await loadFormulas();
+          await loadCookingFormulas();
 
         if (active) {
-          setFormulas(data);
+          setCookingFormulas(data);
         }
       } catch {
         if (active) {
           setError(
-            'No se pudieron cargar las fórmulas.',
+            currentTab === 'bebidas'
+              ? 'No se pudieron cargar las fórmulas de bebidas.'
+              : 'No se pudieron cargar las fórmulas de cocina.',
           );
         }
       } finally {
@@ -86,19 +126,43 @@ export function FormulasPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [currentTab]);
+
+  function changeTab(
+    tab: FormulaTab,
+  ) {
+    setSearchParams(
+      tab === 'cocina'
+        ? {
+            tipo: 'cocina',
+          }
+        : {},
+    );
+  }
 
   function createFormula() {
-    navigate('/formulas/nueva');
+    navigate(
+      currentTab === 'bebidas'
+        ? '/formulas/nueva'
+        : '/formulas/cocina/nueva',
+    );
   }
 
   function editFormula(
     formulaId: string,
   ) {
     navigate(
-      `/formulas/${formulaId}/editar`,
+      currentTab === 'bebidas'
+        ? `/formulas/${formulaId}/editar`
+        : `/formulas/cocina/${formulaId}/editar`,
     );
   }
+
+  const empty =
+    currentTab === 'bebidas'
+      ? formulas.length === 0
+      : cookingFormulas.length ===
+        0;
 
   return (
     <section className={styles.page}>
@@ -113,8 +177,7 @@ export function FormulasPage() {
               styles.description
             }
           >
-            Configurá el consumo estimado por
-            persona para las reservas de fiesta.
+            Configurá por separado las fórmulas de bebidas y las fórmulas de cocina.
           </p>
         </div>
 
@@ -127,9 +190,63 @@ export function FormulasPage() {
             aria-hidden="true"
           />
 
-          Nueva fórmula
+          {currentTab === 'bebidas'
+            ? 'Nueva fórmula de bebidas'
+            : 'Nueva fórmula de cocina'}
         </Button>
       </header>
+
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-label="Tipos de fórmula"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={
+            currentTab === 'bebidas'
+          }
+          className={
+            currentTab === 'bebidas'
+              ? styles.activeTab
+              : styles.tab
+          }
+          onClick={() =>
+            changeTab('bebidas')
+          }
+        >
+          <FlaskConical
+            size={18}
+            aria-hidden="true"
+          />
+
+          Bebidas
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          aria-selected={
+            currentTab === 'cocina'
+          }
+          className={
+            currentTab === 'cocina'
+              ? styles.activeTab
+              : styles.tab
+          }
+          onClick={() =>
+            changeTab('cocina')
+          }
+        >
+          <Pizza
+            size={18}
+            aria-hidden="true"
+          />
+
+          Cocina
+        </button>
+      </div>
 
       {error && (
         <div
@@ -157,16 +274,24 @@ export function FormulasPage() {
 
       {!loading &&
         !error &&
-        formulas.length === 0 && (
+        empty && (
           <div
             className={
               styles.emptyState
             }
           >
-            <FlaskConical
-              size={38}
-              aria-hidden="true"
-            />
+            {currentTab ===
+            'bebidas' ? (
+              <FlaskConical
+                size={38}
+                aria-hidden="true"
+              />
+            ) : (
+              <Pizza
+                size={38}
+                aria-hidden="true"
+              />
+            )}
 
             <div>
               <strong>
@@ -174,9 +299,10 @@ export function FormulasPage() {
               </strong>
 
               <p>
-                Creá la primera fórmula para
-                asignarla a las reservas de
-                fiesta.
+                {currentTab ===
+                'bebidas'
+                  ? 'Creá la primera fórmula de bebidas para asignarla a las reservas de fiesta.'
+                  : 'Creá la primera fórmula de cocina para asignarla a las reservas de mesa.'}
               </p>
             </div>
 
@@ -196,6 +322,7 @@ export function FormulasPage() {
 
       {!loading &&
         !error &&
+        currentTab === 'bebidas' &&
         formulas.length > 0 && (
           <>
             <div
@@ -206,38 +333,6 @@ export function FormulasPage() {
               <table
                 className={styles.table}
               >
-                <colgroup>
-                  <col
-                    className={
-                      styles.nameColumn
-                    }
-                  />
-
-                  <col
-                    className={
-                      styles.statusColumn
-                    }
-                  />
-
-                  <col
-                    className={
-                      styles.versionColumn
-                    }
-                  />
-
-                  <col
-                    className={
-                      styles.dateColumn
-                    }
-                  />
-
-                  <col
-                    className={
-                      styles.actionsColumn
-                    }
-                  />
-                </colgroup>
-
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -271,9 +366,7 @@ export function FormulasPage() {
                             }
                           >
                             <strong>
-                              {
-                                formula.nombre
-                              }
+                              {formula.nombre}
                             </strong>
 
                             {formula.descripcion && (
@@ -328,7 +421,6 @@ export function FormulasPage() {
                                 formula.id,
                               )
                             }
-                            aria-label={`Editar ${formula.nombre}`}
                           >
                             <Pencil
                               size={18}
@@ -408,9 +500,7 @@ export function FormulasPage() {
                       </div>
 
                       <div>
-                        <dt>
-                          Modificada
-                        </dt>
+                        <dt>Modificada</dt>
 
                         <dd>
                           {formatDate(
@@ -436,7 +526,230 @@ export function FormulasPage() {
                         aria-hidden="true"
                       />
 
-                      
+                      <span>Editar</span>
+                    </button>
+                  </article>
+                ),
+              )}
+            </div>
+          </>
+        )}
+
+      {!loading &&
+        !error &&
+        currentTab === 'cocina' &&
+        cookingFormulas.length >
+          0 && (
+          <>
+            <div
+              className={
+                styles.desktopTable
+              }
+            >
+              <table
+                className={styles.table}
+              >
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Ítems incluidos</th>
+                    <th>
+                      Última modificación
+                    </th>
+                    <th>
+                      <span
+                        className={
+                          styles.srOnly
+                        }
+                      >
+                        Acciones
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {cookingFormulas.map(
+                    (formula) => (
+                      <tr
+                        key={formula.id}
+                      >
+                        <td>
+                          <div
+                            className={
+                              styles.formulaInfo
+                            }
+                          >
+                            <strong>
+                              {formula.nombre}
+                            </strong>
+
+                            {formula.descripcion && (
+                              <span>
+                                {
+                                  formula.descripcion
+                                }
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td>
+                          <span
+                            className={
+                              formula.activa
+                                ? styles.activeBadge
+                                : styles.inactiveBadge
+                            }
+                          >
+                            {formula.activa
+                              ? 'Activa'
+                              : 'Inactiva'}
+                          </span>
+                        </td>
+
+                        <td>
+                          {formula.items.length}{' '}
+                          {formula.items.length ===
+                          1
+                            ? 'ítem'
+                            : 'ítems'}
+                        </td>
+
+                        <td>
+                          {formatDate(
+                            formula.actualizadoEn,
+                          )}
+                        </td>
+
+                        <td
+                          className={
+                            styles.actionCell
+                          }
+                        >
+                          <button
+                            type="button"
+                            className={
+                              styles.editButton
+                            }
+                            onClick={() =>
+                              editFormula(
+                                formula.id,
+                              )
+                            }
+                          >
+                            <Pencil
+                              size={18}
+                              aria-hidden="true"
+                            />
+
+                            <span>
+                              Editar
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              className={
+                styles.mobileList
+              }
+            >
+              {cookingFormulas.map(
+                (formula) => (
+                  <article
+                    key={formula.id}
+                    className={
+                      styles.card
+                    }
+                  >
+                    <header
+                      className={
+                        styles.cardHeader
+                      }
+                    >
+                      <div>
+                        <h2>
+                          {formula.nombre}
+                        </h2>
+
+                        {formula.descripcion && (
+                          <p>
+                            {
+                              formula.descripcion
+                            }
+                          </p>
+                        )}
+                      </div>
+
+                      <span
+                        className={
+                          formula.activa
+                            ? styles.activeBadge
+                            : styles.inactiveBadge
+                        }
+                      >
+                        {formula.activa
+                          ? 'Activa'
+                          : 'Inactiva'}
+                      </span>
+                    </header>
+
+                    <dl
+                      className={
+                        styles.cardDetails
+                      }
+                    >
+                      <div>
+                        <dt>
+                          Ítems incluidos
+                        </dt>
+
+                        <dd>
+                          {
+                            formula.items.length
+                          }{' '}
+                          {formula.items
+                            .length === 1
+                            ? 'ítem'
+                            : 'ítems'}
+                        </dd>
+                      </div>
+
+                      <div>
+                        <dt>Modificada</dt>
+
+                        <dd>
+                          {formatDate(
+                            formula.actualizadoEn,
+                          )}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <button
+                      type="button"
+                      className={
+                        styles.editButton
+                      }
+                      onClick={() =>
+                        editFormula(
+                          formula.id,
+                        )
+                      }
+                    >
+                      <Pencil
+                        size={18}
+                        aria-hidden="true"
+                      />
+
+                      <span>Editar</span>
                     </button>
                   </article>
                 ),

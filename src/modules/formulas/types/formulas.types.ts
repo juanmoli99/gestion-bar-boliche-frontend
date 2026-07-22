@@ -74,3 +74,29 @@ export interface UpdateFormulaResponse {
   items: FormulaSavedItem[];
   actualizadoEn: string;
 }
+
+export interface CookingFormulaItem {
+  itemId: string;
+  nombreItem: string;
+  itemActivo: boolean;
+  cantidadPorPersona: number;
+}
+
+export interface CookingFormula {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  activa: boolean;
+  creadoEn: string;
+  actualizadoEn: string;
+  items: CookingFormulaItem[];
+}
+
+export interface SaveCookingFormulaRequest {
+  nombre: string;
+  descripcion?: string;
+  items: {
+    itemId: string;
+    cantidadPorPersona: number;
+  }[];
+}

@@ -8,7 +8,7 @@ import {
 import {
   useAuth,
 } from '../../modules/auth/hooks/useAuth';
-import { SalaryPositionsPage } from '../../modules/salaries/pages/SalaryPositionsPage';
+
 import {
   LoginPage,
 } from '../../modules/auth/pages/LoginPage';
@@ -26,8 +26,16 @@ import {
 } from '../../modules/dashboard/pages/DashboardPage';
 
 import {
+  CreateCookingFormulaPage,
+} from '../../modules/formulas/pages/CreateCookingFormulaPage';
+
+import {
   CreateFormulaPage,
 } from '../../modules/formulas/pages/CreateFormulaPage';
+
+import {
+  EditCookingFormulaPage,
+} from '../../modules/formulas/pages/EditCookingFormulaPage';
 
 import {
   EditFormulaPage,
@@ -68,6 +76,10 @@ import {
 import {
   ReservationsPage,
 } from '../../modules/reservations/pages/ReservationsPage';
+
+import {
+  SalaryPositionsPage,
+} from '../../modules/salaries/pages/SalaryPositionsPage';
 
 import {
   PlaceholderPage,
@@ -189,11 +201,12 @@ function RoleRoute({
 
 export function AppRouter() {
   return (
-  <Routes>
-    <Route
-      path="/"
-      element={<PublicLoginRoute />}
-    />
+    <Routes>
+      <Route
+        path="/"
+        element={<PublicLoginRoute />}
+      />
+
       <Route element={<ProtectedRoute />}>
         <Route element={<AuthenticatedLayout />}>
           <Route
@@ -245,6 +258,20 @@ export function AppRouter() {
             <Route
               path="/formulas/:id/editar"
               element={<EditFormulaPage />}
+            />
+
+            <Route
+              path="/formulas/cocina/nueva"
+              element={
+                <CreateCookingFormulaPage />
+              }
+            />
+
+            <Route
+              path="/formulas/cocina/:id/editar"
+              element={
+                <EditCookingFormulaPage />
+              }
             />
 
             <Route
@@ -334,9 +361,9 @@ export function AppRouter() {
               path="/sueldos"
               element={<SalaryPositionsPage />}
             />
-                </Route>
-              </Route>
-            </Route>
+          </Route>
+        </Route>
+      </Route>
 
       <Route
         path="*"

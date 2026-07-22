@@ -1,6 +1,7 @@
 import { api } from '../../../services/api';
 
 import type {
+  CookingFormula,
   CancelReservationRequest,
   CancelReservationResponse,
   ConfirmReservationResponse,
@@ -69,6 +70,19 @@ export async function listFormulas(): Promise<
     await api.get<
       ApiResponse<ReservationFormula[]>
     >('/formulas');
+
+  return response.data.data.filter(
+    (formula) => formula.activa,
+  );
+}
+
+export async function listCookingFormulas(): Promise<
+  CookingFormula[]
+> {
+  const response =
+    await api.get<
+      ApiResponse<CookingFormula[]>
+    >('/cooking-formulas');
 
   return response.data.data.filter(
     (formula) => formula.activa,
