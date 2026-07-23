@@ -14,6 +14,7 @@ import {
   PackageSearch,
   PartyPopper,
   Users,
+  Utensils,
 } from 'lucide-react';
 
 import {
@@ -21,12 +22,14 @@ import {
 } from '../../../components/ui/Button';
 
 import {
+  runDinnerShoppingListCalculation,
   runPurchaseCalculation,
 } from '../services/calculations.service';
 
 import type {
   CalculationFormState,
   CalculationResult,
+  DinnerShoppingListResult,
 } from '../types/calculations.types';
 
 import styles from './CalculationsPage.module.css';
@@ -116,6 +119,11 @@ function formatQuantity(
 }
 
 export function CalculationsPage() {
+  const [calculationType, setCalculationType] =
+    useState<'PARTIES' | 'DINNERS'>(
+      'PARTIES',
+    );
+
   const [form, setForm] =
     useState<CalculationFormState>(
       createInitialForm,
@@ -125,6 +133,14 @@ export function CalculationsPage() {
     useState<CalculationResult | null>(
       null,
     );
+
+  const [
+    dinnerResult,
+    setDinnerResult,
+  ] =
+  useState<DinnerShoppingListResult | null>(
+    null,
+  );
 
   const [calculating, setCalculating] =
     useState(false);
@@ -188,18 +204,34 @@ export function CalculationsPage() {
     setCalculating(true);
 
     try {
-      const calculation =
-        await runPurchaseCalculation({
-          fechaDesde:
-            form.fechaDesde,
-          fechaHasta:
-            form.fechaHasta,
-        });
+      if (calculationType === 'PARTIES') {
+        const calculation =
+          await runPurchaseCalculation({
+            fechaDesde:
+              form.fechaDesde,
+            fechaHasta:
+              form.fechaHasta,
+          });
 
-      setResult(calculation);
+        setResult(calculation);
+        setDinnerResult(null);
+      } else {
+        const calculation =
+          await runDinnerShoppingListCalculation({
+            fechaDesde:
+              form.fechaDesde,
+            fechaHasta:
+              form.fechaHasta,
+          });
+
+        setDinnerResult(calculation);
+        setResult(null);
+      }
     } catch {
       setError(
-        'No se pudo realizar el cálculo. Verificá que existan fiestas confirmadas con una fórmula configurada.',
+        calculationType === 'PARTIES'
+          ? 'No se pudo realizar el cálculo. Verificá que existan fiestas confirmadas con una fórmula configurada.'
+          : 'No se pudo generar la lista de compras. Verificá que existan reservas de mesa señadas con una fórmula de cocina configurada.',
       );
     } finally {
       setCalculating(false);
@@ -219,6 +251,73 @@ export function CalculationsPage() {
           </p>
         </div>
       </header>
+
+      <section
+  className={
+    styles.calculationTypeSelector
+  }
+  aria-label="Tipo de cálculo"
+>
+  <button
+    type="button"
+    className={`${styles.calculationTypeButton} ${
+      calculationType === 'PARTIES'
+        ? styles.calculationTypeButtonActive
+        : ''
+    }`}
+    onClick={() => {
+      setCalculationType('PARTIES');
+      setResult(null);
+      setDinnerResult(null);
+      setError('');
+    }}
+  >
+    <PartyPopper
+      size={24}
+      aria-hidden="true"
+    />
+
+    <div>
+      <strong>
+        Cálculo de fiestas
+      </strong>
+
+      <span>
+        Calcula productos para reservas de fiesta confirmadas.
+      </span>
+    </div>
+  </button>
+
+  <button
+    type="button"
+    className={`${styles.calculationTypeButton} ${
+      calculationType === 'DINNERS'
+        ? styles.calculationTypeButtonActive
+        : ''
+    }`}
+    onClick={() => {
+      setCalculationType('DINNERS');
+      setResult(null);
+      setDinnerResult(null);
+      setError('');
+    }}
+  >
+    <Utensils
+      size={24}
+      aria-hidden="true"
+    />
+
+    <div>
+          <strong>
+            Lista de compras para cenas
+          </strong>
+
+          <span>
+            Calcula insumos para reservas de mesa señadas.
+          </span>
+        </div>
+      </button>
+    </section>
 
       <form
         className={styles.form}
@@ -297,7 +396,7 @@ export function CalculationsPage() {
         )}
       </form>
 
-      {!result && (
+      {!result && !dinnerResult && (
         <section
           className={styles.initialState}
         >
@@ -317,6 +416,304 @@ export function CalculationsPage() {
           </div>
         </section>
       )}
+
+      {dinnerResult && (
+      <>
+        <section
+          className={styles.summary}
+          aria-label="Resumen del cálculo de cenas"
+        >
+          <article
+            className={styles.summaryCard}
+          >
+            <Utensils
+              size={24}
+              aria-hidden="true"
+            />
+
+            <div>
+              <span>Cenas</span>
+
+              <strong>
+                {dinnerResult.cantidadCenas}
+              </strong>
+            </div>
+          </article>
+
+          <article
+            className={styles.summaryCard}
+          >
+            <Users
+              size={24}
+              aria-hidden="true"
+            />
+
+            <div>
+              <span>Personas</span>
+
+              <strong>
+                {dinnerResult.cantidadPersonas}
+              </strong>
+            </div>
+          </article>
+
+          <article
+            className={styles.summaryCard}
+          >
+            <PackageSearch
+              size={24}
+              aria-hidden="true"
+            />
+
+            <div>
+              <span>Productos a comprar</span>
+
+              <strong>
+                {dinnerResult.itemsComprar}
+              </strong>
+            </div>
+          </article>
+        </section>
+
+        <section className={styles.period}>
+          <CalendarDays
+            size={19}
+            aria-hidden="true"
+          />
+
+          <span>
+            Período:{' '}
+            <strong>
+              {formatDate(
+                dinnerResult.fechaDesde,
+              )}
+            </strong>
+            {' — '}
+            <strong>
+              {formatDate(
+                dinnerResult.fechaHasta,
+              )}
+            </strong>
+          </span>
+        </section>
+        {dinnerResult.cantidadCenas === 0 && (
+  <section
+    className={styles.emptyState}
+  >
+    <CircleAlert
+      size={36}
+      aria-hidden="true"
+    />
+
+    <div>
+      <h2>
+        No hay cenas señadas
+      </h2>
+
+      <p>
+        No se encontraron reservas de mesa señadas dentro del período seleccionado.
+      </p>
+    </div>
+  </section>
+)}
+
+{dinnerResult.listaCompra.length > 0 && (
+  <section
+    className={styles.resultsSection}
+  >
+    <header
+      className={styles.sectionHeader}
+    >
+      <div>
+        <h2>
+          Lista de compras
+        </h2>
+
+        <p>
+          Cantidad necesaria, stock disponible y faltante para comprar.
+        </p>
+      </div>
+    </header>
+
+    <div
+      className={styles.tableWrapper}
+    >
+      <table
+        className={styles.table}
+      >
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Necesario</th>
+            <th>Stock</th>
+            <th>Comprar</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {dinnerResult.listaCompra.map(
+            (item) => (
+              <tr key={item.itemId}>
+                <td>
+                  <strong>
+                    {item.nombreItem}
+                  </strong>
+                </td>
+
+                <td>
+                  {formatQuantity(
+                    item.cantidadNecesaria,
+                  )}{' '}
+                  {item.abreviaturaUnidad}
+                </td>
+
+                <td>
+                  {formatQuantity(
+                    item.stockDisponible,
+                  )}{' '}
+                  {item.abreviaturaUnidad}
+                </td>
+
+                <td>
+                  <strong
+                    className={styles.quantity}
+                  >
+                    {formatQuantity(
+                      item.cantidadComprar,
+                    )}{' '}
+                    {item.abreviaturaUnidad}
+                  </strong>
+
+                  {item.packsComprar !== null && (
+                    <small>
+                      {' '}
+                      ({item.packsComprar}{' '}
+                      {item.packsComprar === 1
+                        ? 'pack'
+                        : 'packs'})
+                    </small>
+                  )}
+                </td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
+
+{dinnerResult.desglosePorFecha
+  .length > 0 && (
+  <section
+    className={
+      styles.breakdownSection
+    }
+  >
+    <header
+      className={
+        styles.sectionHeading
+      }
+    >
+      <h2>
+        Desglose por fecha
+      </h2>
+
+      <p>
+        Cantidades agrupadas por día.
+      </p>
+    </header>
+
+    <div
+      className={
+        styles.detailsList
+      }
+    >
+      {dinnerResult.desglosePorFecha.map(
+        (date) => (
+          <details
+            key={date.fecha}
+            className={
+              styles.detailsCard
+            }
+          >
+            <summary>
+              <div
+                className={
+                  styles.detailsSummary
+                }
+              >
+                <CalendarDays
+                  size={20}
+                  aria-hidden="true"
+                />
+
+                <div>
+                  <strong>
+                    {formatDate(
+                      date.fecha,
+                    )}
+                  </strong>
+
+                  <span>
+                    {
+                      date.cantidadCenas
+                    }{' '}
+                    {date.cantidadCenas ===
+                    1
+                      ? 'cena'
+                      : 'cenas'}
+                    {' · '}
+                    {
+                      date.cantidadPersonas
+                    }{' '}
+                    personas
+                  </span>
+                </div>
+              </div>
+
+              <ChevronDown
+                size={20}
+                aria-hidden="true"
+              />
+            </summary>
+
+            <div
+              className={
+                styles.detailsContent
+              }
+            >
+              {date.items.map(
+                (item) => (
+                  <div
+                    key={item.itemId}
+                    className={
+                      styles.itemRow
+                    }
+                  >
+                    <span>
+                      {
+                        item.nombreItem
+                      }
+                    </span>
+
+                    <strong>
+                      {formatQuantity(
+                        item.cantidadNecesaria,
+                      )}
+                    </strong>
+                  </div>
+                ),
+              )}
+            </div>
+          </details>
+        ),
+      )}
+    </div>
+  </section>
+)}
+      </>
+    )}
 
       {result && (
         <>

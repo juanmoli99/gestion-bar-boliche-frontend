@@ -36,6 +36,41 @@ export interface CalculationResult {
   totalesPorItem: CalculationItem[];
 }
 
+export interface DinnerShoppingListItem {
+  itemId: string;
+  nombreItem: string;
+  unidadMedida: string;
+  abreviaturaUnidad: string;
+  unidadesPorPack: number | null;
+  cantidadNecesaria: number;
+  stockDisponible: number;
+  cantidadComprar: number;
+  packsComprar: number | null;
+}
+
+export interface DinnerShoppingListDateItem {
+  itemId: string;
+  nombreItem: string;
+  cantidadNecesaria: number;
+}
+
+export interface DinnerShoppingListDate {
+  fecha: string;
+  cantidadCenas: number;
+  cantidadPersonas: number;
+  items: DinnerShoppingListDateItem[];
+}
+
+export interface DinnerShoppingListResult {
+  fechaDesde: string;
+  fechaHasta: string;
+  cantidadCenas: number;
+  cantidadPersonas: number;
+  itemsComprar: number;
+  listaCompra: DinnerShoppingListItem[];
+  desglosePorFecha: DinnerShoppingListDate[];
+}
+
 export interface CalculationFormState {
   fechaDesde: string;
   fechaHasta: string;
